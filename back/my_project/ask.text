@@ -1,0 +1,66 @@
+hello , how are you , i have the follwin models :
+from django.db import models
+
+# Create your models here.
+
+
+
+class RequestService(models.Model):
+    full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15, db_index=True)
+    SPEED_OPTIONS = [
+        ('3', '3'),
+        ('5', '5'),
+        ('10', '10'),
+        ('15', '15'),
+        ('custom', 'Custom speed'),
+
+    ]
+
+    speed = models.CharField(max_length=10, choices=SPEED_OPTIONS)
+    custom_speed = models.CharField(max_length=10, blank=True, null=True)
+    city= models.CharField(max_length=50)
+    area = models.CharField(max_length=50)
+    address = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)  # Set once when created
+    updated = models.DateTimeField(auto_now=True)      # Updated every time saved
+
+
+    STATUS_OPTIONS = [
+        ('received_request', 'received request'),
+        ('replied_to_client ', 'replied to client '),
+    ]
+    status = models.CharField(max_length=50, choices=STATUS_OPTIONS)
+
+
+
+
+class RequestEagent(models.Model):
+
+    AGENT_TYPE_OPTIONS = [
+        ('sub_provider', 'sub_provider'),
+        ('distributor ', 'distributor'),
+        ('pos ', 'pos'),
+    ]
+
+    agent_type = models.CharField(max_length=50, choices=AGENT_TYPE_OPTIONS)
+    full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15, db_index=True)
+    city= models.CharField(max_length=50)
+    area = models.CharField(max_length=50)
+    address = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)  # Set once when created
+    updated = models.DateTimeField(auto_now=True)      # Updated every time saved
+
+
+    STATUS_OPTIONS = [
+        ('received_request', 'received request'),
+        ('replied_to_client ', 'replied to client '),
+    ]
+    status = models.CharField(max_length=50, choices=STATUS_OPTIONS)
+
+
+
+
+ 
+no i have to create a model for note , eatch not can be reloaded with RequestService or RequestEagent model, how do you think i have to create this note model ?
