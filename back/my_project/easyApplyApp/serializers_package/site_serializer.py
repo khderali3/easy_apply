@@ -1,0 +1,92 @@
+
+from ..models import (RequestService, RequestAgent,
+                       SpeedPackagePrice, TrafficPackagePrice, UnlimitedSpeedTrafficPackagePrice
+                      
+                      )
+
+from rest_framework import serializers
+
+
+
+from rest_framework import serializers
+
+
+
+
+
+class UnlimitedSpeedTrafficPackagePriceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UnlimitedSpeedTrafficPackagePrice
+        fields = "__all__"
+        read_only_fields = ['id']
+
+
+
+
+
+class TrafficPackagePriceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TrafficPackagePrice
+        fields = "__all__"
+        read_only_fields = ['id']
+
+
+
+
+
+class SpeedPackagePriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpeedPackagePrice
+        fields =  "__all__"
+
+
+
+
+class GetPricesInfoSerializer(serializers.Serializer):
+    unlimited_speed_packages = UnlimitedSpeedTrafficPackagePriceSerializer(many=True)
+    traffic_packages = TrafficPackagePriceSerializer(many=True)
+    speed_packages = SpeedPackagePriceSerializer(many=True)
+
+
+
+
+
+class RequestServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RequestService
+        fields = "__all__"
+        read_only_fields = ['id']
+
+
+ 
+
+
+class RequestAgentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RequestAgent
+        fields = "__all__"
+        read_only_fields = ['id']
+
+
+
+
+
+
+
+
+class CheckRequestStatusSerializer(serializers.Serializer):
+    TYPE_CHOICES = (
+        ('agent', 'Agent'),
+        ('client', 'Client'),
+    )
+
+    type_of_request = serializers.ChoiceField(choices=TYPE_CHOICES)
+    phone_number = serializers.CharField(max_length=20)
+ 
+
+
+

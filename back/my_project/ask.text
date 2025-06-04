@@ -1,66 +1,99 @@
-hello , how are you , i have the follwin models :
-from django.db import models
+hi i have the follwin models :
 
-# Create your models here.
+
+
 
 
 
 class RequestService(models.Model):
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, db_index=True)
-    SPEED_OPTIONS = [
-        ('3', '3'),
-        ('5', '5'),
-        ('10', '10'),
-        ('15', '15'),
-        ('custom', 'Custom speed'),
-
-    ]
-
-    speed = models.CharField(max_length=10, choices=SPEED_OPTIONS)
+    speed = models.JSONField(null=True, blank=True)  
     custom_speed = models.CharField(max_length=10, blank=True, null=True)
     city= models.CharField(max_length=50)
     area = models.CharField(max_length=50)
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)  # Set once when created
     updated = models.DateTimeField(auto_now=True)      # Updated every time saved
-
-
-    STATUS_OPTIONS = [
-        ('received_request', 'received request'),
-        ('replied_to_client ', 'replied to client '),
-    ]
-    status = models.CharField(max_length=50, choices=STATUS_OPTIONS)
-
-
-
-
-class RequestEagent(models.Model):
-
-    AGENT_TYPE_OPTIONS = [
-        ('sub_provider', 'sub_provider'),
-        ('distributor ', 'distributor'),
-        ('pos ', 'pos'),
-    ]
-
-    agent_type = models.CharField(max_length=50, choices=AGENT_TYPE_OPTIONS)
-    full_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15, db_index=True)
-    city= models.CharField(max_length=50)
-    area = models.CharField(max_length=50)
-    address = models.CharField(max_length=255)
-    created = models.DateTimeField(auto_now_add=True)  # Set once when created
-    updated = models.DateTimeField(auto_now=True)      # Updated every time saved
-
+    request_result_note = models.CharField(max_length=255, default='')
 
     STATUS_OPTIONS = [
         ('received_request', 'received request'),
-        ('replied_to_client ', 'replied to client '),
+        ('replied_to_client', 'replied to client'),
     ]
-    status = models.CharField(max_length=50, choices=STATUS_OPTIONS)
+    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='received_request')
+
+    def __str__(self):
+        return self.full_name    
 
 
+
+class SpeedPackagePrice(models.Model):
+    speed = models.CharField(max_length=20)
+    speed_ar = models.CharField(max_length=20)
+    traffic_limit = models.CharField(max_length=20 )
+    traffic_limit_ar = models.CharField(max_length=20 )
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.speed}"
+
+
+
+
+
+and the follwin serializers :
+
+
+
+
+class SpeedPackagePriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpeedPackagePrice
+        fields =  "__all__"
+
+
+
+
+class RequestServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RequestService
+        fields = "__all__"
+        read_only_fields = ['id']
 
 
  
-no i have to create a model for note , eatch not can be reloaded with RequestService or RequestEagent model, how do you think i have to create this note model ?
+
+ and the follwing view:
+
+ class RequestServiceView(APIView):
+    permission_classes = [AllowAny]
+ 
+    def post(self, request):
+
+        speed_obj_id = request.data.get('speed')
+        speed_obj = get_object_or_404(SpeedPackagePrice, id=speed_obj_id)
+
+        speed_serializer = SpeedPackagePriceSerializer(speed_obj)
+        speed_data = speed_serializer.data
+        data = request.data.copy()
+        data['speed'] = speed_data
+
+        serializer = RequestServiceSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+when i try to send a post request , it return error :
+{
+    "speed": [
+        "Value must be valid JSON."
+    ]
+}
+
+why , and how to fix ?

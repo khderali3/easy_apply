@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'djoser',
+    # 'djoser',
+    'customCaptchaApp',
     'usersAuthApp',
     'easyApplyApp',
+    'usersManagmentApp',
 
 
 ]
@@ -49,7 +51,10 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication', ## default not used
+        'usersAuthApp.utils.authentication.CustomJWTAuthentication', # custom auth 
+
+
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -67,8 +72,12 @@ DJOSER = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=100),
+
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
@@ -155,3 +164,31 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'usersAuthApp.UserAccount'
+
+
+
+
+## custom project att :
+
+PAGINATION_PAGE_SIZE = 1
+ 
+ENABLED_CAPTCHA = False
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+
+#auth cookie settings 
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2 
+AUTH_COOKIE_SECURE =  True
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_PATH = '/'
+AUTH_COOKIE_SAMESITE = 'none' # shuld be string and lowercase 

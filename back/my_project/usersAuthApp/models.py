@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
  
 
 
-
+from django.utils import timezone
  
  
 class UserAccountManager(BaseUserManager):
@@ -51,6 +51,15 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
 
+    country = models.CharField(max_length=255, default="")
+    city = models.CharField(max_length=255, default="")
+    address = models.CharField(max_length=255, default="")
+    phone_number = models.CharField(max_length=255, default="")
+    email_notifications_enabled = models.BooleanField(default=False) 
+    created_date = models.DateTimeField(default=timezone.now)
+    updated_date = models.DateTimeField(auto_now=True)
+
+
     objects = UserAccountManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name' ]
@@ -63,3 +72,14 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 
  
+
+ 
+class CustomPermission(models.Model):
+    class Meta:        
+        managed = False   
+        default_permissions = ()                                
+        permissions = ( 
+            ('user_managment', 'User Managment'),  
+
+        )
+
