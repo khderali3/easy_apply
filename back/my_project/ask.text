@@ -1,99 +1,69 @@
-hi i have the follwin models :
+i wana add url /register for new user 
+
+
+and i wana send email verifacation to activate user account , 
+
+
+this only handle the backend part django with reset framwork , 
+provide with best practise as pro developer do with this . 
+
+kindly note the follwing , i have app called systemSettingsApp include model that called "MainConfiguration" and include include :
+
+
+    email_service_enabled = models.BooleanField(default=True)
+
+    email_host = models.CharField(max_length=255,  default="smtp.test.local")
+    email_port = models.PositiveIntegerField( default=465)
+    email_host_user = models.EmailField( default="user@test.local")
+    email_host_password = models.CharField(max_length=255,   default="00000000")
+    email_use_tls = models.BooleanField(default=False)
+    email_use_ssl = models.BooleanField(default=False)
+    maintenance_mode = models.BooleanField(default=False)
+
+
+
+when user is register shuld add with active state false if the email will send, 
+
+the email send if the follwing is:
+
+    maintenance_mode = False
+    email_service_enabled = True
+    allow_registration_without_email_verification = False
+
+
+    email_host : has data  and ok 
+    email_port  : has data  and ok 
+    email_host_user  : has data  and ok  
+    email_host_password  : has data  and ok 
 
 
 
 
-
-
-class RequestService(models.Model):
-    full_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15, db_index=True)
-    speed = models.JSONField(null=True, blank=True)  
-    custom_speed = models.CharField(max_length=10, blank=True, null=True)
-    city= models.CharField(max_length=50)
-    area = models.CharField(max_length=50)
-    address = models.CharField(max_length=255)
-    created = models.DateTimeField(auto_now_add=True)  # Set once when created
-    updated = models.DateTimeField(auto_now=True)      # Updated every time saved
-    request_result_note = models.CharField(max_length=255, default='')
-
-    STATUS_OPTIONS = [
-        ('received_request', 'received request'),
-        ('replied_to_client', 'replied to client'),
-    ]
-    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='received_request')
-
-    def __str__(self):
-        return self.full_name    
+if the allow_registration_without_email_verification = False , not email activation will send and user will be active after register . 
 
 
 
-class SpeedPackagePrice(models.Model):
-    speed = models.CharField(max_length=20)
-    speed_ar = models.CharField(max_length=20)
-    traffic_limit = models.CharField(max_length=20 )
-    traffic_limit_ar = models.CharField(max_length=20 )
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return f"{self.speed}"
+also i have app called "usersAuthApp" inside it model :
 
-
-
-
-
-and the follwin serializers :
-
-
-
-
-class SpeedPackagePriceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SpeedPackagePrice
-        fields =  "__all__"
-
-
-
-
-class RequestServiceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = RequestService
-        fields = "__all__"
-        read_only_fields = ['id']
-
-
+class UserAccount(AbstractBaseUser, PermissionsMixin):
+ 
+    is_email_verified = models.BooleanField(default=False)
  
 
- and the follwing view:
 
- class RequestServiceView(APIView):
-    permission_classes = [AllowAny]
+
+
+ after user activate his account by email the is_email_verified shuld be change to True , 
+
+
+
+the setting of email shuld be get it from model "MainConfiguration" , 
+
+email send function shuld be sparated from view to make it reusble , 
+
+the email template 
+
+
+kindly do that as best practise , 
  
-    def post(self, request):
 
-        speed_obj_id = request.data.get('speed')
-        speed_obj = get_object_or_404(SpeedPackagePrice, id=speed_obj_id)
-
-        speed_serializer = SpeedPackagePriceSerializer(speed_obj)
-        speed_data = speed_serializer.data
-        data = request.data.copy()
-        data['speed'] = speed_data
-
-        serializer = RequestServiceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-when i try to send a post request , it return error :
-{
-    "speed": [
-        "Value must be valid JSON."
-    ]
-}
-
-why , and how to fix ?

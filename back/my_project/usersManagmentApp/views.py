@@ -224,87 +224,7 @@ class GetPermissionAPIView(APIView):
 
 
 
-
-
-
-
-# class GroupAddOrRemovePermissionView(APIView):
-#     permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission ]  # Only admin can assign/remove groups
  
-
-#     def post(self, request, group_id):
-#         try:
-#             permission_ids = request.data.getlist('permission[]', [])
-#         except:
-#             permission_ids = []
-
-#         if not permission_ids:
-#             try:
-#                 group = Group.objects.get(id=group_id)
-#                 group.permissions.clear()  # Clear all permissions
-#                 permissions = group.permissions.all()
-#                 serializer = PermissionSerializer(permissions, many=True)
-#                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-#             except Group.DoesNotExist:
-#                 return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-#             except Exception as e:
-#                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-#         # Initialize a list for valid permission IDs
-#         valid_permission_ids = []
-#         for permission_id in permission_ids:
-#             if permission_id:
-#                 valid_permission_ids.append(permission_id)
-
-#         try:
-#             # Get the group by ID
-#             group = Group.objects.get(id=group_id)
-            
-#             # Get the ContentType for CustomPermission model
-#             custom_permission_content_type = ContentType.objects.get_for_model(CustomPermission)
-            
-#             # If no valid permission IDs, clear the group's permissions
-#             if not valid_permission_ids:
-#                 group.permissions.clear()
-#                 permissions = group.permissions.filter(content_type=custom_permission_content_type)
-#                 serializer = PermissionSerializer(permissions, many=True)
-#                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
-#             # Get the permissions from valid_permission_ids that belong to the CustomPermission model
-#             permissions = Permission.objects.filter(
-#                 id__in=valid_permission_ids,
-#                 content_type=custom_permission_content_type
-#             )
-
- 
-#             if permissions.count() != len(valid_permission_ids):
-#                 return Response(
-#                     {'message': 'One or more permissions not found or do not belong to the CustomPermission model.'},
-#                     status=status.HTTP_404_NOT_FOUND
-#                 )
-
- 
-
-#             # Set the permissions for the group
-#             group.permissions.set(permissions)
-
-#             # Fetch the updated list of permissions for the group
-#             permissions = group.permissions.filter(content_type=custom_permission_content_type)
-#             serializer = PermissionSerializer(permissions, many=True)
-            
-#             # Return the updated permissions in the response
-#             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        
-#         except Group.DoesNotExist:
-#             return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-#         except Permission.DoesNotExist:
-#             return Response({'error': 'One or more permissions not found.'}, status=status.HTTP_404_NOT_FOUND)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
 
 
 
@@ -341,3 +261,93 @@ class GroupAddOrRemovePermissionView(APIView):
         serializer = PermissionSerializer(permissions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+
+
+
+class UserPermissionView(APIView):
+    permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
+
+
+    def get(self, request, id):
+        try:
+            user = User.objects.get(id=id)
+            permissions = user.user_permissions.all()
+            serializer = PermissionSerializer(permissions, many=True)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+    @transaction.atomic
+    def put(self, request, id):
+        permission_ids = request.data.get('permissions', [])
+
+        # Validate user existence
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Filter only permissions related to CustomPermission model
+        custom_permission_content_type = ContentType.objects.get_for_model(CustomPermission)
+        permissions = Permission.objects.filter(id__in=permission_ids, content_type=custom_permission_content_type)
+
+        # Validate permission IDs
+        if permissions.count() != len(permission_ids):
+            valid_ids = set(permissions.values_list('id', flat=True))
+            invalid_ids = set(permission_ids) - valid_ids
+            return Response({'message': f'Invalid permission IDs: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Assign (replace all) permissions to the user
+        user.user_permissions.set(permissions)
+
+        # Serialize and return updated permissions
+        serializer = PermissionSerializer(permissions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+
+
+class UserGroupView(APIView):
+    permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
+
+    def get(self, request, id):
+        try:
+            user = User.objects.get(id=id)
+            groups = user.groups.all()
+            serializer = GroupSerializer(groups, many=True)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @transaction.atomic
+    def put(self, request, id):
+        group_ids = request.data.get('groups', [])
+
+        # Validate user existence
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Validate groups
+        groups = Group.objects.filter(id__in=group_ids)
+
+        if groups.count() != len(group_ids):
+            valid_ids = set(groups.values_list('id', flat=True))
+            invalid_ids = set(group_ids) - valid_ids
+            return Response({'message': f'Invalid group IDs: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Assign (replace all) groups to the user
+        user.groups.set(groups)
+
+        # Serialize and return updated groups
+        serializer = GroupSerializer(groups, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

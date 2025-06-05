@@ -50,7 +50,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
-
     country = models.CharField(max_length=255, default="")
     city = models.CharField(max_length=255, default="")
     address = models.CharField(max_length=255, default="")
@@ -58,6 +57,14 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     email_notifications_enabled = models.BooleanField(default=False) 
     created_date = models.DateTimeField(default=timezone.now)
     updated_date = models.DateTimeField(auto_now=True)
+
+    LANGUAGE_CHOICES = [
+        ('en', 'English'),
+        ('ar', 'Arabic'),
+        ]
+
+    preferred_language = models.CharField(max_length=2,choices=LANGUAGE_CHOICES, default='en' )
+
 
 
     objects = UserAccountManager()
