@@ -28,7 +28,10 @@ class MainConfiguration(models.Model):
     site_name = models.CharField(max_length=255,default="My Site Name")
     site_name_ar = models.CharField(max_length=255,default="اسم الموقع")
 
-
+    frontend_activation_url = models.URLField(
+        default="http://localhost:3000/account/activate-account",  # or your production default
+        help_text="Base frontend URL for account activation, e.g. http://example.com/activate-account"
+    )
 
     support_email = models.EmailField(default="supprt@test.local")
     company_logo = models.ImageField(upload_to="company_logo/", null=True, blank=True, validators=[validate_logo])
@@ -114,12 +117,12 @@ class MainConfiguration(models.Model):
     allow_registration_without_email_verification = models.BooleanField(default=False)
 
 
-    email_host = models.CharField(max_length=255,  default="smtp.test.local")
-    email_port = models.PositiveIntegerField( default=465)
-    email_host_user = models.EmailField( default="user@test.local")
-    email_host_password = models.CharField(max_length=255,   default="00000000")
-    email_use_tls = models.BooleanField(default=False)
-    email_use_ssl = models.BooleanField(default=False)
+    smtp_host = models.CharField(max_length=255,  default="smtp.test.local")
+    smtp_port = models.PositiveIntegerField( default=465)
+    smtp_host_user = models.EmailField( default="user@test.local")
+    smtp_host_user_password = models.CharField(max_length=255,   default="00000000")
+    smtp_use_tls = models.BooleanField(default=False)
+    smtp_use_ssl = models.BooleanField(default=False)
 
     # Localization / Language options
     default_language = models.CharField(max_length=2, choices=[('en', 'English'), ('ar', 'Arabic')], default='en')

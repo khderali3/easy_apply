@@ -1,69 +1,55 @@
-i wana add url /register for new user 
+for user registration view and serializer , here is my code :
 
 
-and i wana send email verifacation to activate user account , 
-
-
-this only handle the backend part django with reset framwork , 
-provide with best practise as pro developer do with this . 
-
-kindly note the follwing , i have app called systemSettingsApp include model that called "MainConfiguration" and include include :
-
-
-    email_service_enabled = models.BooleanField(default=True)
-
-    email_host = models.CharField(max_length=255,  default="smtp.test.local")
-    email_port = models.PositiveIntegerField( default=465)
-    email_host_user = models.EmailField( default="user@test.local")
-    email_host_password = models.CharField(max_length=255,   default="00000000")
-    email_use_tls = models.BooleanField(default=False)
-    email_use_ssl = models.BooleanField(default=False)
-    maintenance_mode = models.BooleanField(default=False)
-
-
-
-when user is register shuld add with active state false if the email will send, 
-
-the email send if the follwing is:
-
-    maintenance_mode = False
-    email_service_enabled = True
-    allow_registration_without_email_verification = False
-
-
-    email_host : has data  and ok 
-    email_port  : has data  and ok 
-    email_host_user  : has data  and ok  
-    email_host_password  : has data  and ok 
-
-
-
-
-if the allow_registration_without_email_verification = False , not email activation will send and user will be active after register . 
-
-
-
-also i have app called "usersAuthApp" inside it model :
-
-class UserAccount(AbstractBaseUser, PermissionsMixin):
  
-    is_email_verified = models.BooleanField(default=False)
+class RegisterNewUserSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True, min_length=8)
+    password2 = serializers.CharField(write_only=True, min_length=8, label="Confirm password")
+
+
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'password', 'password2']
  
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+        return data
 
 
 
-
- after user activate his account by email the is_email_verified shuld be change to True , 
-
-
-
-the setting of email shuld be get it from model "MainConfiguration" , 
-
-email send function shuld be sparated from view to make it reusble , 
-
-the email template 
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
 
-kindly do that as best practise , 
- 
+class RegisterNewUserView(APIView):
+     def post(self, request):
+        config = MainConfiguration.get_solo()
 
+        if config.maintenance_mode or not config.allow_user_registration:
+            return Response({'detail': 'Registration is currently disabled.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = RegisterNewUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            if not config.allow_registration_without_email_verification:
+                user.is_active = False
+                user.save()
+                try:
+                    send_activation_email(user, request)
+                except Exception as e:
+                    return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                user.is_active = True
+                user.save()
+
+            return Response({'detail': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+is the pssword will hash curerctly , do you recomand me any think as pro developer and best practise ? 
