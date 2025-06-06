@@ -1,6 +1,7 @@
  
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^4-f4(e@e0_v!&w1)7!3*4#8ni(o+fg7l-%*173$!teb7smu8j'
+# SECRET_KEY = 'django-insecure-^4-f4(e@e0_v!&w1)7!3*4#8ni(o+fg7l-%*173$!teb7smu8j'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -27,9 +29,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    # 'djoser',
+    'djoser',
+    'social_django',
+
     'systemSettingsApp',
     'customCaptchaApp',
     'usersAuthApp',
@@ -52,13 +57,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'USER_CREATE_PASSWORD_RETYPE': True,
-    'USER_ID_FIELD': 'id',
-    'SEND_ACTIVATION_EMAIL': False,
-    'SERIALIZERS': {},
-}
+
 
 from datetime import timedelta
 
@@ -73,6 +72,10 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+
+    "corsheaders.middleware.CorsMiddleware",
+
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -163,7 +166,7 @@ AUTH_USER_MODEL = 'usersAuthApp.UserAccount'
 
 PAGINATION_PAGE_SIZE = 1
  
-ENABLED_CAPTCHA = False
+ 
 
 CACHES = {
     "default": {
@@ -174,6 +177,13 @@ CACHES = {
         }
     }
 }
+
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'  # Redis URL
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 
 
@@ -191,3 +201,45 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root_dir/')
 MEDIA_URL = '/media_url/'
 
 
+SECRET_KEY = config("SECRET_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+ 
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+
+    'TOKEN_MODEL': None,
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':['http://localhost:3000/account/google' ],
+
+    'SOCIAL_AUTH_TOKEN_STRATEGY': "usersAuthApp.serializers.CustomProviderTokenStrategy",
+
+}
+
+
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'prompt': 'select_account consent'
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000'
+]
+
+CORS_ALLOW_CREDENTIALS = True

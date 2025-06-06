@@ -5,9 +5,15 @@ from django.core.cache import cache
  
 from redis.exceptions import ConnectionError
 
+from systemSettingsApp.models import MainConfiguration
+
 
 def verify_image_captcha(request):
-    if not getattr(settings, "ENABLED_CAPTCHA", False):
+
+
+    config = MainConfiguration.get_solo()
+
+    if not getattr(config, "is_captcha_enabled", False):
         return True, ""
 
     captcha_id = request.data.get("captcha_id")

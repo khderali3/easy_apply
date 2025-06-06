@@ -23,7 +23,7 @@ from redis.exceptions import ConnectionError
 
 from .utils import verify_image_captcha
 
-
+from systemSettingsApp.models import MainConfiguration
 
 
 
@@ -31,12 +31,24 @@ class GenerateImageCaptchaView(APIView):
     permission_classes = []
 
     def get(self, request):
-        if not getattr(settings, "ENABLED_CAPTCHA", False):
+
+        config = MainConfiguration.get_solo()
+
+        if not getattr(config, "is_captcha_enabled", False):
             return Response({
                 "captcha_id": "",
                 "captcha_image": "",
                 "message": "CAPTCHA is disabled."
             }, status=status.HTTP_200_OK)
+
+
+
+        # if not getattr(settings, "ENABLED_CAPTCHA", False):
+        #     return Response({
+        #         "captcha_id": "",
+        #         "captcha_image": "",
+        #         "message": "CAPTCHA is disabled."
+        #     }, status=status.HTTP_200_OK)
 
         # Generate random 5-digit captcha text
         captcha_text = str(uuid.uuid4().int)[:5]

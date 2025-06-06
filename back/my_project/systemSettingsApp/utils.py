@@ -1,42 +1,31 @@
-# usersAuthApp/utils.py
 
-from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template import Template, Context
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+
+ 
+from systemSettingsApp.models import MainConfiguration
+import validators
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.tokens import default_token_generator
-from django.urls import reverse
+
+from rest_framework.exceptions import ValidationError
+
+
+
+
+
+from .tasks import send_email_task  # <-- Import Celery task
+
+from datetime import timedelta
+from django.utils import timezone
  
-from systemSettingsApp.models import MainConfiguration
-import validators
  
 
- 
- 
- 
-from systemSettingsApp.models import MainConfiguration
-import validators
 
-
-import ssl
-from django.core.mail.backends.smtp import EmailBackend  
-from django.utils.functional import cached_property 
-
-
-class CustomEmailBackend(EmailBackend):
-
-    @cached_property
-    def ssl_context(self):
-        if self.ssl_certfile or self.ssl_keyfile:
-            ssl_context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_CLIENT)
-            ssl_context.load_cert_chain(self.ssl_certfile, self.ssl_keyfile)
-            return ssl_context
-        else:
-            ssl_context = ssl.create_default_context()
-            ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
-            return ssl_context
-
+# Use PasswordResetTokenGenerator explicitly
+activation_token_generator = PasswordResetTokenGenerator()
 
 
 
@@ -45,162 +34,24 @@ def is_valid_smtp_host(value):
  
 
 
-# def send_email(subject: str, body: str, to_email: str):
-#     """
-#     Generic email sending function using SMTP settings from MainConfiguration.
-#     """
-#     config = MainConfiguration.get_solo()
-
-#     if config.maintenance_mode:
-#         raise Exception("The system is currently in maintenance mode.")
-
-#     smtp_host = config.smtp_host.strip()
-#     if not is_valid_smtp_host(smtp_host):
-#         raise Exception("SMTP host address is not valid.")
-
-#     required_fields = [
-#         config.smtp_host,
-#         config.smtp_port,
-#         config.smtp_host_user,
-#         config.smtp_host_user_password,
-#     ]
-#     if not all(required_fields):
-#         raise Exception("Incomplete email configuration.")
-
-#     if not is_valid_smtp_host(config.smtp_host):
-#         raise Exception("SMTP Host Address no valied.")
 
 
 
+def is_valid_smtp_host(value):
+    return validators.domain(value) or validators.ipv4(value)
 
-#     try:
- 
-#         connection = CustomEmailBackend(
-#             host=smtp_host,
-#             port=config.smtp_port,
-#             username=config.smtp_host_user,
-#             password=config.smtp_host_user_password,
-#             use_tls=config.smtp_use_tls,
-#             use_ssl=config.smtp_use_ssl,
-#             fail_silently=False
-#         )
-
-
-
-#         email = EmailMultiAlternatives(
-#             subject=subject,
-#             body=body,
-#             from_email=config.smtp_host_user,
-#             to=[to_email],
-#             connection=connection,
-#         )
-
-#         email.send()
-
-#     except Exception as e:
-#         raise Exception(f"Failed to send email: {str(e)}")
-
-
-
-
-# def send_activation_email(user, request):
-#     """
-#     Prepares and sends the activation email to the user using a language-specific template.
-#     Uses frontend_activation_url from MainConfiguration.
-#     """
-#     config = MainConfiguration.get_solo()
-
-#     # Encode UID and generate token
-#     uid = urlsafe_base64_encode(force_bytes(user.pk))
-#     token = default_token_generator.make_token(user)
-
-#     # Construct frontend activation link
-#     activation_link = f"{config.frontend_activation_url}?uid={uid}&token={token}"
-
-#     # Choose email template based on default language
-#     language = config.default_language
-#     template_string = config.activation_email_template_ar if language == 'ar' else config.activation_email_template_en
-
-#     # Render email message with template context
-#     context = Context({
-#         'full_name': f"{user.first_name} {user.last_name}",
-#         'activation_link': activation_link,
-#         'company_name': config.company_name,
-#         'site_name': config.site_name,
-#     })
-#     template = Template(template_string)
-#     message = template.render(context)
-
-#     # Email subject and send
-#     subject = f"Activate your account on {config.site_name}"
-#     send_email(subject, message, user.email)
-
-
-
-
-
-# def send_email(subject: str, body: str, to_email: str, is_html=False):
-#     config = MainConfiguration.get_solo()
-
-#     if config.maintenance_mode:
-#         raise Exception("The system is currently in maintenance mode.")
-
-#     smtp_host = config.smtp_host.strip()
-#     if not is_valid_smtp_host(smtp_host):
-#         raise Exception("SMTP host address is not valid.")
-
-#     required_fields = [
-#         config.smtp_host,
-#         config.smtp_port,
-#         config.smtp_host_user,
-#         config.smtp_host_user_password,
-#     ]
-#     if not all(required_fields):
-#         raise Exception("Incomplete email configuration.")
-
-#     if not is_valid_smtp_host(config.smtp_host):
-#         raise Exception("SMTP Host Address no valied.")
-
-
-
-
-#     try:
-#         connection = CustomEmailBackend(
-#             host=config.smtp_host.strip(),
-#             port=config.smtp_port,
-#             username=config.smtp_host_user,
-#             password=config.smtp_host_user_password,
-#             use_tls=config.smtp_use_tls,
-#             use_ssl=config.smtp_use_ssl,
-#             fail_silently=False
-#         )
-
-#         email = EmailMultiAlternatives(
-#             subject=subject,
-#             body=body if not is_html else '',  # fallback text if needed
-#             from_email=config.smtp_host_user,
-#             to=[to_email],
-#             connection=connection,
-#         )
-
-#         if is_html:
-#             email.attach_alternative(body, "text/html")
-
-#         email.send()
-
-#     except Exception as e:
-#         raise Exception(f"Failed to send email: {str(e)}")
-
-
-
-
-from django.utils.html import strip_tags
 
 def send_email(subject, body, to_email, is_html=False):
+    """
+    Validates configuration and queues the email for sending via Celery.
+    """
     config = MainConfiguration.get_solo()
 
     if config.maintenance_mode:
         raise Exception("The system is currently in maintenance mode.")
+
+    if not config.email_service_enabled:
+        raise Exception("The Email Service is Disabled.")
 
     smtp_host = config.smtp_host.strip()
     if not is_valid_smtp_host(smtp_host):
@@ -215,104 +66,15 @@ def send_email(subject, body, to_email, is_html=False):
     if not all(required_fields):
         raise Exception("Incomplete email configuration.")
 
+    # If validation passes, delegate to Celery
     try:
-        connection = CustomEmailBackend(
-            host=smtp_host,
-            port=config.smtp_port,
-            username=config.smtp_host_user,
-            password=config.smtp_host_user_password,
-            use_tls=config.smtp_use_tls,
-            use_ssl=config.smtp_use_ssl,
-            fail_silently=False
-        )
-
-        if is_html:
-            plain_text_body = strip_tags(body)
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=plain_text_body,  # fallback for non-HTML clients
-                from_email=config.smtp_host_user,
-                to=[to_email],
-                connection=connection,
-            )
-            email.attach_alternative(body, "text/html")
-        else:
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=body,
-                from_email=config.smtp_host_user,
-                to=[to_email],
-                connection=connection,
-            )
-
-        email.send()
-
+        send_email_task.delay(subject, body, to_email, is_html)
     except Exception as e:
-        raise Exception(f"Failed to send email: {str(e)}")
+        raise Exception(f"Failed to queue email task: {str(e)}")
 
 
 
 
- 
-# def send_activation_email(user, request):
-#     """
-#     Prepares and sends the activation email to the user using a language-specific template.
-#     Uses frontend_activation_url from MainConfiguration.
-#     """
-#     config = MainConfiguration.get_solo()
-
-#     # Encode UID and generate token
-#     uid = urlsafe_base64_encode(force_bytes(user.pk))
-#     token = default_token_generator.make_token(user)
-
-
- 
- 
-
-#     # Construct frontend activation link
-#     activation_link = f"{config.frontend_activation_url}?uid={uid}&token={token}"
-
-#     # Choose email template based on default language
-#     language = config.default_language
-#     template_string = config.activation_email_template_ar if language == 'ar' else config.activation_email_template_en
-
-#     # Render email message with template context
-#     context = Context({
-#         'full_name': f"{user.first_name} {user.last_name}",
-#         'activation_link': activation_link,
-#         'company_name': config.company_name,
-#         'site_name': config.site_name,
-#     })
-#     template = Template(template_string)
-#     message_body = template.render(context)
-
-#     # Wrap in HTML with direction based on language
-#     direction = "rtl" if language == "ar" else "ltr"
-#     html_message = f"""
-#     <html>
-#         <body style="direction: {direction}; text-align: { 'right' if direction == 'rtl' else 'left' };">
-#             <pre style="font-family: inherit; white-space: pre-wrap;">{message_body}</pre>
-#         </body>
-#     </html>
-#     """
-
-#     # Email subject
-#     subject = f"Activate your account on {config.site_name}"
-
-#     # Send using HTML-capable method
-#     send_email(subject, html_message, user.email, is_html=True)
-
-
-
-
-
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.template import Template, Context
-
-# Use PasswordResetTokenGenerator explicitly
-activation_token_generator = PasswordResetTokenGenerator()
 
 def send_activation_email(user, request):
     """
@@ -336,12 +98,29 @@ def send_activation_email(user, request):
         else config.activation_email_template_en
     )
 
+
+
+    if language == "ar":
+        company_name = config.company_name_ar
+        site_name = config.site_name_ar
+    else :
+        company_name = config.company_name
+        site_name = config.site_name
+
+ 
+
+
+
+
+
+
+
     # Render the email body with context
     context = Context({
         'full_name': f"{user.first_name} {user.last_name}",
         'activation_link': activation_link,
-        'company_name': config.company_name,
-        'site_name': config.site_name,
+        'company_name': company_name,
+        'site_name': site_name,
     })
     template = Template(template_string)
     message_body = template.render(context)
@@ -357,7 +136,115 @@ def send_activation_email(user, request):
     """
 
     # Email subject
-    subject = f"Activate your account on {config.site_name}"
+    # subject = f"Activate your account on {config.site_name}"
+
+
+    subjects = {
+        "en": f"Activate your account on {site_name}",
+        "ar": f"فعّل حسابك على {site_name}",
+        # add other languages as needed
+    }
+
+    subject = subjects.get(language, subjects["en"])  # default to English if language not found
+
+
+
+
 
     # Send HTML email
     send_email(subject, html_message, user.email, is_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+def send_reset_password_email(user, request):
+    """
+    Sends a reset password email if the user is allowed (based on time limit).
+    """
+    config = MainConfiguration.get_solo()
+    now = timezone.now()
+
+    # Check if cooldown has passed
+    if user.last_password_reset_email_sent:
+        elapsed = now - user.last_password_reset_email_sent
+        wait_hours = config.reset_email_wait_hours
+        if elapsed < timedelta(hours=wait_hours):
+            remaining_minutes = int((timedelta(hours=wait_hours) - elapsed).total_seconds() // 60)
+            raise ValidationError(
+                f"Please wait {remaining_minutes} more minute(s) before requesting another password reset email."
+            )
+
+    # Generate token and uid
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    reset_link = f"{config.frontend_reset_password_url}?uid={uid}&token={token}"
+
+    # Select language-specific template
+    # language = config.default_language
+
+    language = user.preferred_language
+
+    template_string = (
+        config.reset_password_template_ar
+        if language == "ar"
+        else config.reset_password_template_en
+    )
+
+
+    if language == "ar":
+        company_name = config.company_name_ar
+        site_name = config.site_name_ar
+    else :
+        company_name = config.company_name
+        site_name = config.site_name
+
+ 
+
+
+    # Render template with context
+    context = Context({
+        'full_name': f"{user.first_name} {user.last_name}",
+        'reset_link': reset_link,
+        'company_name': company_name,
+        'site_name': site_name,
+    })
+    template = Template(template_string)
+    message_body = template.render(context)
+
+    # Wrap in HTML
+    direction = "rtl" if language == "ar" else "ltr"
+    html_message = f"""
+    <html>
+        <body style="direction: {direction}; text-align: {'right' if direction == 'rtl' else 'left'}; font-family: sans-serif;">
+            <pre style="white-space: pre-wrap;">{message_body}</pre>
+        </body>
+    </html>
+    """
+
+    # Email subject
+
+    # subject = f"Reset your password on {config.site_name}"
+
+    subjects = {
+        "en": f"Reset your password on {site_name}",
+        "ar": f"إعادة تعيين كلمة المرور على {site_name}",
+        # add other languages as needed
+    }
+
+    subject = subjects.get(language, subjects["en"])  # default to English if language not found
+
+
+    # Send the email
+    send_email(subject, html_message, user.email, is_html=True)
+
+    # Update the last_password_reset_email_sent field
+    user.last_password_reset_email_sent = now
+    user.save(update_fields=['last_password_reset_email_sent'])

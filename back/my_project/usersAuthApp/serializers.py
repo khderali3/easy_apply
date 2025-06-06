@@ -9,6 +9,91 @@ User = get_user_model()
 from django.contrib.auth.password_validation import validate_password
 
 
+
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from django.utils.encoding import force_str
+from rest_framework.exceptions import ValidationError
+
+User = get_user_model()
+token_generator = PasswordResetTokenGenerator()
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+
+class CustomProviderTokenStrategy:
+
+    """
+    this only to add extra att in refresh token , but if you wana add extra att to a full resupose add from view .
+    """
+
+    @classmethod
+    def obtain(cls, user):
+
+        refresh = RefreshToken.for_user(user)
+
+        refresh['first_name'] = user.first_name
+        refresh['is_staff'] = user.is_staff
+        refresh['is_superuser'] = user.is_superuser
+        refresh['custom_att'] = "custom_value"
+
+ 
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+ 
+          }
+
+ 
+
+ 
+
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    confirm_new_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate(self, data):
+        # Validate matching passwords
+        if data["new_password"] != data["confirm_new_password"]:
+            raise ValidationError({"confirm_new_password": "Passwords do not match."})
+
+        # Decode UID and fetch user
+        try:
+            uid = force_str(urlsafe_base64_decode(data["uid"]))
+            user = User.objects.get(pk=uid, is_active=True)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            raise ValidationError({"uid": "Invalid or expired reset link."})
+
+        # Validate token
+        if not token_generator.check_token(user, data["token"]):
+            raise ValidationError({"token": "Invalid or expired reset link."})
+
+        self.user = user
+        return data
+
+    def save(self, **kwargs):
+        password = self.validated_data["new_password"]
+        self.user.set_password(password)
+        # self.user.last_password_reset_email_sent = None  # Clear cooldown after reset
+        self.user.is_email_verified = True
+
+        self.user.save()
+
+
+
+
+
+
+
+
  
 class RegisterNewUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)

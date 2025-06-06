@@ -57,6 +57,9 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     email_notifications_enabled = models.BooleanField(default=False) 
     created_date = models.DateTimeField(default=timezone.now)
     updated_date = models.DateTimeField(auto_now=True)
+    last_password_reset_email_sent = models.DateTimeField(null=True, blank=True)
+
+
 
     LANGUAGE_CHOICES = [
         ('en', 'English'),

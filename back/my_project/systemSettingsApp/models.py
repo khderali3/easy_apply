@@ -28,10 +28,22 @@ class MainConfiguration(models.Model):
     site_name = models.CharField(max_length=255,default="My Site Name")
     site_name_ar = models.CharField(max_length=255,default="اسم الموقع")
 
+
     frontend_activation_url = models.URLField(
         default="http://localhost:3000/account/activate-account",  # or your production default
         help_text="Base frontend URL for account activation, e.g. http://example.com/activate-account"
     )
+
+
+
+
+
+    frontend_reset_password_url = models.URLField(
+        default="http://localhost:3000/account/reset_password",   
+        help_text="Base frontend URL for reset_password, e.g. http://example.com/reset_password"
+    )
+
+
 
     support_email = models.EmailField(default="supprt@test.local")
     company_logo = models.ImageField(upload_to="company_logo/", null=True, blank=True, validators=[validate_logo])
@@ -110,6 +122,15 @@ class MainConfiguration(models.Model):
         """)
 
 
+
+    reset_email_wait_hours = models.PositiveIntegerField(
+        default=1,
+        help_text="Minimum number of hours required between password reset emails for the same user."
+    )
+
+
+
+
     # Email settings
 
     email_service_enabled = models.BooleanField(default=True)
@@ -128,6 +149,8 @@ class MainConfiguration(models.Model):
     default_language = models.CharField(max_length=2, choices=[('en', 'English'), ('ar', 'Arabic')], default='en')
 
  
+
+    is_captcha_enabled =models.BooleanField(default=True)
 
     # Control flags
     maintenance_mode = models.BooleanField(default=False)
