@@ -1,7 +1,10 @@
 
 
 import threading
-from ..custom_app_utils import get_client_ip
+ 
+
+from ..custom_utils import get_client_ip
+
 
 _thread_locals = threading.local()
 

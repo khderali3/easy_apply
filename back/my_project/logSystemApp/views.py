@@ -2,9 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from django_project.custom_app_utils import MyCustomPagination, IsStaffOrSuperUser
-
-
+ 
+from general_utils.custom_utils import MyCustomPagination , IsStaffOrSuperUser
 
 
 from rest_framework.views import APIView, Response, status
