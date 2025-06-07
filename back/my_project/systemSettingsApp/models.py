@@ -9,6 +9,9 @@ from PIL import Image
 import os
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.utils import timezone
+from datetime import timedelta
+
 
 
 def validate_logo(value):
@@ -192,4 +195,53 @@ class MainConfiguration(models.Model):
     def get_solo(cls):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
+
+
+
+
+
+class QueuedEmail(models.Model):
+
+    cooldown_seconds = 10  # prevent retrying too quickly
+
+
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('sending', 'Sending'),
+
+        ('sent', 'Sent'),
+        ('failed', 'Failed'),
+    )
+
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    to_email = models.EmailField()
+    is_html = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    retries = models.PositiveIntegerField(default=0)
+    max_retries = models.PositiveIntegerField(default=3)
+    last_attempt = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_error_message = models.TextField(default="")
+    last_error_message_date = models.DateTimeField(blank=True, null=True)
+
+    # def can_retry(self):
+    #     return self.status == 'failed' and self.retries < self.max_retries
+    
+    def can_send(self):
+        if  self.retries >= self.max_retries:
+            return False
+        if self.last_error_message_date:
+            return timezone.now() - self.last_error_message_date > timedelta(seconds=self.cooldown_seconds)
+        return True
+
+
+
+    def can_retry(self):
+
+        if self.status != 'failed' or self.retries >= self.max_retries:
+            return False
+        if self.last_error_message_date:
+            return timezone.now() - self.last_error_message_date > timedelta(seconds=self.cooldown_seconds)
+        return True
 

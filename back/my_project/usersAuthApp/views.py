@@ -55,6 +55,7 @@ from rest_framework_simplejwt.tokens import UntypedToken
 
 class CustomProviderAuthView(ProviderAuthView):
 
+
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
 
@@ -118,6 +119,10 @@ class CustomProviderAuthView(ProviderAuthView):
 
 
 class PasswordResetConfirmAPIView(APIView):
+
+    permission_classes = []  # Allow any user  
+
+
     """
     Confirms the password reset using uid and token from the link,
     and allows the user to set a new password.
@@ -141,6 +146,7 @@ class SendResetPasswordEmailAPIView(APIView):
     Accepts email in POST body, checks if reset can be sent based on cooldown,
     and sends the reset email using the configured template.
     """
+    permission_classes = []  # Allow any user  
 
     def post(self, request):
 

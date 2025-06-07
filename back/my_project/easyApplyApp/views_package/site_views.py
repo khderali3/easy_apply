@@ -52,9 +52,13 @@ class RequestServiceView(APIView):
     permission_classes = [AllowAny]
  
     def post(self, request):
+
+
         is_valid, error = verify_image_captcha(request)
         if not is_valid:
             return Response({"message": error}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
         speed_obj_id = request.data.get('speed')

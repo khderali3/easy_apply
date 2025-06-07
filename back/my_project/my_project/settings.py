@@ -34,8 +34,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'djoser',
     'social_django',
-
+    'django_celery_beat',
     'systemSettingsApp',
+    "logSystemApp",
     'customCaptchaApp',
     'usersAuthApp',
     'easyApplyApp',
@@ -243,3 +244,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+
+USE_TZ = True
+TIME_ZONE = 'Asia/Damascus'

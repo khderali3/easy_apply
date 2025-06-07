@@ -14,9 +14,9 @@ from rest_framework.exceptions import ValidationError
 
 
 
+from .models import QueuedEmail
 
-
-from .tasks import send_email_task  # <-- Import Celery task
+from .tasks import send_email_task
 
 from datetime import timedelta
 from django.utils import timezone
@@ -67,8 +67,20 @@ def send_email(subject, body, to_email, is_html=False):
         raise Exception("Incomplete email configuration.")
 
     # If validation passes, delegate to Celery
+
+
+    # Save email intent to DB
+    queued = QueuedEmail.objects.create(
+        subject=subject,
+        body=body,
+        to_email=to_email,
+        is_html=is_html,
+    )
+
+
+
     try:
-        send_email_task.delay(subject, body, to_email, is_html)
+        send_email_task.delay(queued.id)
     except Exception as e:
         raise Exception(f"Failed to queue email task: {str(e)}")
 

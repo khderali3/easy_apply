@@ -1,16 +1,15 @@
 from celery import shared_task
 from django.utils.html import strip_tags
 from systemSettingsApp.models import MainConfiguration
+import ssl
+from django.utils.functional import cached_property 
+from django.core.mail import EmailMultiAlternatives
+from django.utils import timezone
+from .models import QueuedEmail
  
 
-import ssl
+
 from django.core.mail.backends.smtp import EmailBackend  
-from django.utils.functional import cached_property 
-
-
-from django.core.mail import EmailMultiAlternatives
-
-
 
 
 class CustomEmailBackend(EmailBackend):
@@ -32,43 +31,95 @@ class CustomEmailBackend(EmailBackend):
 
 
 
-@shared_task
-def send_email_task(subject, body, to_email, is_html=False):
+from django.db import transaction
+
+
+@shared_task(bind=True)
+def send_email_task(self, email_id):
+
+    config = MainConfiguration.get_solo()
+    host = config.smtp_host.strip()
+    # host = "test.test.test"
+    log = None  # <--- Define it first
+
     try:
-        config = MainConfiguration.get_solo()
-        smtp_host = config.smtp_host.strip()
+        log = QueuedEmail.objects.get(id=email_id)
+    except:
+        return
+ 
+    if not log.can_send():
+        return
+
+
+    try:
+ 
+        log.status = 'sending'
+        log.save(update_fields=['status'])
+
 
         connection = CustomEmailBackend(
-            host=smtp_host,
+            host= host,
+            
             port=config.smtp_port,
             username=config.smtp_host_user,
             password=config.smtp_host_user_password,
             use_tls=config.smtp_use_tls,
             use_ssl=config.smtp_use_ssl,
-            fail_silently=False
+            fail_silently=False,
+            timeout=15,
         )
 
-        if is_html:
-            plain_text_body = strip_tags(body)
+        if log.is_html:
+            plain_text_body = strip_tags(log.body)
             email = EmailMultiAlternatives(
-                subject=subject,
+                subject=log.subject,
                 body=plain_text_body,
                 from_email=config.smtp_host_user,
-                to=[to_email],
+                to=[log.to_email],
                 connection=connection,
             )
-            email.attach_alternative(body, "text/html")
+            email.attach_alternative(log.body, "text/html")
         else:
             email = EmailMultiAlternatives(
-                subject=subject,
-                body=body,
+                subject=log.subject,
+                body=log.body,
                 from_email=config.smtp_host_user,
-                to=[to_email],
+                to=[log.to_email],
                 connection=connection,
             )
 
         email.send()
+        log.status = 'sent'
+        log.save(update_fields=['status'])
+
 
     except Exception as e:
-        # You could log the error or retry depending on the configuration
-        raise Exception(f"Failed to send email via Celery: {str(e)}")
+        if log:
+            log.status = 'failed'
+
+            log.last_error_message = f" {host} -  {str(e)}"
+            log.last_error_message_date = timezone.now()
+            log.retries += 1
+
+            log.save(update_fields=['status', 'last_error_message', 'last_error_message_date', 'retries' ])
+
+ 
+ 
+
+
+ 
+
+
+
+@shared_task
+def retry_failed_emails():
+    # print('this retry_failed_emails is working ')
+    failed_emails = QueuedEmail.objects.filter(status='failed')
+
+    for email in failed_emails:
+        if email.can_retry():
+            send_email_task.delay(email.id)
+
+
+
+

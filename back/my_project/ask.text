@@ -1,3 +1,68 @@
-http://127.0.0.1:8000/api/o/google-oauth2/?redirect_uri=http://localhost:3000/account/google
 
-http://127.0.0.1:8000/api/o/google-oauth2/?state=LjFsPoKI7LUPrU0zqiXTrAwVfbjCcVxm&code=4%2F0AVG7fiRLkxfUnM6gIbvK9z3zuaM4WXSnIg5jKBQnkfBlqsPZoK-p9XiGX8LisB7S4g30ag
+@shared_task(bind=True)
+def send_email_task(self, email_id):
+
+    config = MainConfiguration.get_solo()
+    host = config.smtp_host.strip()
+    log = None  # <--- Define it first
+
+    try:
+        log = QueuedEmail.objects.get(id=email_id)
+        log.status = 'sending'
+        log.save()
+  
+
+        connection = CustomEmailBackend(
+            host= host,
+            
+            port=config.smtp_port,
+            username=config.smtp_host_user,
+            password=config.smtp_host_user_password,
+            use_tls=config.smtp_use_tls,
+            use_ssl=config.smtp_use_ssl,
+            fail_silently=False,
+            timeout=15,
+        )
+
+        if log.is_html:
+            plain_text_body = strip_tags(log.body)
+            email = EmailMultiAlternatives(
+                subject=log.subject,
+                body=plain_text_body,
+                from_email=config.smtp_host_user,
+                to=[log.to_email],
+                connection=connection,
+            )
+            email.attach_alternative(log.body, "text/html")
+        else:
+            email = EmailMultiAlternatives(
+                subject=log.subject,
+                body=log.body,
+                from_email=config.smtp_host_user,
+                to=[log.to_email],
+                connection=connection,
+            )
+
+        email.send()
+        log.status = 'sent'
+        log.save()
+
+
+    except Exception as e:
+        if log:
+            log.status = 'failed'
+
+            log.last_error_message = f" {host} -  {str(e)}"
+            log.last_error_message_date = timezone.now()
+            log.retries += 1
+            log.save()
+
+ 
+
+
+
+aftert email send :
+ log.status = 'sent' and save  but befaure i use   log.status = 'sending' and save ,
+
+ is this rite or i save towic on same object , is there any problem or normal , is i need to get object befure change and save or nor problem ?
+ 
