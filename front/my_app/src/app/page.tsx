@@ -1,0 +1,13 @@
+
+
+
+const Page = ()=>{
+
+
+  return (
+
+    <h1>test page</h1>
+  )
+}
+
+export default Page
