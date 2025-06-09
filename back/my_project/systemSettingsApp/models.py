@@ -162,6 +162,8 @@ class MainConfiguration(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+
     class Meta:
         verbose_name = "main Configuration"
         verbose_name_plural = "main Configuration"

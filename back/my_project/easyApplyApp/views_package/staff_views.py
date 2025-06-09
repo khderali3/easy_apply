@@ -19,15 +19,23 @@ from ..serializers_package.staff_serializers import (RequestServiceSerializer, R
 
 from django.shortcuts import get_object_or_404 
 
-from ..utils import get_client_ip, IsStaffOrSuperUser, MyCustomPagination
+# from ..utils import get_client_ip, IsStaffOrSuperUser, MyCustomPagination
+
+
+from systemSettingsApp.general_utils.custom_utils import get_client_ip, IsStaffOrSuperUser, MyCustomPagination
+
+
+
 
 from rest_framework.permissions import AllowAny
 from django.db.models import Q
 
 
 
+
+
 class UnlimitedSpeedTrafficPackagePriceView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
 
         serializer = UnlimitedSpeedTrafficPackagePriceSerializer(data=request.data)
@@ -81,7 +89,7 @@ class UnlimitedSpeedTrafficPackagePriceView(APIView):
 
 
 class TrafficPackagePriceView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
 
         serializer = TrafficPackagePriceSerializer(data=request.data)
@@ -134,7 +142,7 @@ class TrafficPackagePriceView(APIView):
 
 
 class SpeedPackagePriceView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
 
         serializer = SpeedPackagePriceSerializer(data=request.data)
@@ -186,7 +194,7 @@ class SpeedPackagePriceView(APIView):
 
 
 class RequestAgentPrivateNoteView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request, request_id):
 
         data = request.data.copy()
@@ -245,7 +253,7 @@ class RequestAgentPrivateNoteView(APIView):
 
 
 class RequestServicePrivateNoteView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request, request_id):
 
         data = request.data.copy()
@@ -308,7 +316,7 @@ class RequestServicePrivateNoteView(APIView):
 
 
 class RequestAgentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
 
         serializer = RequestAgentSerializer(data=request.data)
@@ -369,7 +377,7 @@ class RequestAgentView(APIView):
 
 
 class RequestServiceView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
 
         serializer = RequestServiceSerializer(data=request.data)

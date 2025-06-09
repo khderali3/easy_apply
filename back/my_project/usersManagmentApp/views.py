@@ -8,12 +8,19 @@ from rest_framework.views import APIView , status, Response
 from .serializers import (UserSerializer, UserCreateSerializer, SetUserPasswordSerializer,
                           GroupSerializer, PermissionSerializer
                           
-                          
                           )
+
+
 
 from django.db.models import Q
 
-from usersAuthApp.utils.utils_permissions import IsStaffOrSuperUser, HasUserManagementPermission
+from usersAuthApp.utils.utils_permissions import  HasUserManagementPermission
+
+from systemSettingsApp.general_utils.custom_utils import IsStaffOrSuperUser
+
+
+
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType

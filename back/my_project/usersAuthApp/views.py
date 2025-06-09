@@ -21,7 +21,14 @@ from rest_framework.permissions import AllowAny
 from customCaptchaApp.utils import verify_image_captcha
 from django.contrib.auth import get_user_model
 from systemSettingsApp.models import MainConfiguration
-from systemSettingsApp.utils import send_activation_email, send_reset_password_email
+# from systemSettingsApp.utils import send_activation_email, send_reset_password_email
+
+
+from systemSettingsApp.general_utils.emails_utils import send_activation_email, send_reset_password_email
+
+
+
+
 from django.db import transaction
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode

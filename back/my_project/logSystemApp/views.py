@@ -3,7 +3,11 @@ from django.shortcuts import render
 # Create your views here.
 
  
-from general_utils.custom_utils import MyCustomPagination , IsStaffOrSuperUser
+# from general_utils.custom_utils import MyCustomPagination , IsStaffOrSuperUser
+
+
+from systemSettingsApp.general_utils.custom_utils import MyCustomPagination, IsStaffOrSuperUser
+
 
 
 from rest_framework.views import APIView, Response, status
@@ -42,13 +46,21 @@ class LogView(APIView):
             return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
 
 
- 
-
 
         try:
             ids = request.data.get('ids', [])
             if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
                 return Response({"detail": "Invalid 'ids' format. Must be a list of integers."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+            valied_objects = Log.objects.filter(id__in=ids)
+            if valied_objects.count() != len(ids):
+                valid_ids = set(valied_objects.values_list('id', flat=True))
+                invalid_ids = set(ids) - valid_ids
+                return Response({'message': f'Invalid values: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
             deleted_count, _ = Log.objects.filter(id__in=ids).delete()
             return Response({"deleted_count": deleted_count}, status=status.HTTP_202_ACCEPTED)

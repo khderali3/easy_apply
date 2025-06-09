@@ -5,9 +5,9 @@ from rest_framework.exceptions import PermissionDenied
 
 
 
-class IsStaffOrSuperUser(BasePermission):
-    def has_permission(self, request, view):
-        return request.user and (request.user.is_staff or request.user.is_superuser)
+# class IsStaffOrSuperUser(BasePermission):
+#     def has_permission(self, request, view):
+#         return request.user and (request.user.is_staff or request.user.is_superuser)
     
 
 class HasUserManagementPermission(BasePermission):

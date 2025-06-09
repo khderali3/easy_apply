@@ -6,8 +6,11 @@ from .models import Log
   
  
 
-from general_utils.middlewares.middleware import get_current_user, get_current_ip_address
+# from general_utils.middlewares.middleware import get_current_user, get_current_ip_address
  
+
+from systemSettingsApp.general_utils.middlewares.middleware import get_current_ip_address, get_current_user
+
 
 
 from django.contrib.admin.models import LogEntry  # Make sure you import this

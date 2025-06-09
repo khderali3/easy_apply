@@ -14,9 +14,11 @@ from rest_framework.exceptions import ValidationError
 
 
 
-from .models import QueuedEmail
+from ..models import QueuedEmail
 
-from .tasks import send_email_task
+from ..tasks import send_email_task
+
+
 
 from datetime import timedelta
 from django.utils import timezone

@@ -84,9 +84,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'general_utils.middlewares.middleware.RequestMiddleware',
+    'systemSettingsApp.general_utils.middlewares.middleware.RequestMiddleware',
  
 ]
+
+
 
 ROOT_URLCONF = 'my_project.urls'
 
@@ -167,8 +169,7 @@ AUTH_USER_MODEL = 'usersAuthApp.UserAccount'
 
 ## custom project att :
 
-PAGINATION_PAGE_SIZE = 1
- 
+PAGINATION_PAGE_SIZE = 10
  
 
 CACHES = {

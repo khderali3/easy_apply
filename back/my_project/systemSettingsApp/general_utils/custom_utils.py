@@ -9,6 +9,32 @@ from rest_framework.permissions import BasePermission
 
 
 
+
+
+
+
+def get_user_data(obj, user_attr_name, request=None):
+    user = getattr(obj, user_attr_name, None)
+    if user:
+  
+        return {
+            "is_staff": user.is_staff or user.is_superuser ,
+            "full_name": f"{user.first_name} {user.last_name}",
+            "id": user.id,
+            "email": user.email ,
+
+         }
+    return None
+
+
+ 
+
+
+
+
+
+
+
 class IsStaffOrSuperUser(BasePermission):
     def has_permission(self, request, view):
         return request.user and (request.user.is_staff or request.user.is_superuser)
@@ -19,7 +45,7 @@ class IsStaffOrSuperUser(BasePermission):
 
 
 class MyCustomPagination(PageNumberPagination):
-    page_size = getattr(settings, 'PROJECT_FLOW_PAGINATION_PAGE_SIZE', 30)
+    page_size = getattr(settings, 'PAGINATION_PAGE_SIZE', 30)
     page_size_query_param = 'page_size'
                
     def get_current_page_url(self):

@@ -6,7 +6,12 @@ from ..models import (RequestService, RequestAgent,
 
 from rest_framework import serializers
 
-from ..utils import get_user_data
+# from ..utils import get_user_data
+
+from systemSettingsApp.general_utils.custom_utils import get_user_data
+
+
+
 
 class UnlimitedSpeedTrafficPackagePriceSerializer(serializers.ModelSerializer):
     class Meta:
