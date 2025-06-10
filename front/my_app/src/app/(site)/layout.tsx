@@ -1,9 +1,10 @@
 
- 
 import "@/app/(site)/_components/assets/css/bootstrap.min.css"
-
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import "@/app/globals.css";
+
+
+
 import "@/app/(site)/_components/assets/css/style.css"
 
 
@@ -11,6 +12,7 @@ import "@/app/(site)/_components/assets/css/style.css"
 import Script from "next/script";
  
  
+import CanvasLayout from "./_components/jsx/canvas_layout";
 
 
 
@@ -35,7 +37,7 @@ export default  async function   RootLayout(
     
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
- 
+      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></link> */}
       <meta name="theme-color" content="#000000" />
 
      </head>
@@ -47,11 +49,15 @@ export default  async function   RootLayout(
 
       <div className="    "> 
 
+ 
 
-      
-        {children} 
-      
-         
+
+      <CanvasLayout>
+        {children}
+      </CanvasLayout>
+
+
+
 
 
       </div>

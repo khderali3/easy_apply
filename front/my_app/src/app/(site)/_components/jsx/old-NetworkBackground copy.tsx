@@ -7,11 +7,12 @@ import * as THREE from "three";
 const NetworkBackground: React.FC = () => {
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
+  const lastTimeRef = useRef(0);
 
-  const particleCount = 100;
+  const particleCount = 50;
   const maxDistance = 4;
 
-  // Generate fixed random points in 3D space once
+  // Generate fixed random points once
   const positions = useMemo(() => {
     const arr = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
@@ -22,7 +23,7 @@ const NetworkBackground: React.FC = () => {
     return arr;
   }, [particleCount]);
 
-  // Calculate line segments between close points
+  // Calculate line segments between close points once
   const linePositions = useMemo(() => {
     const lineSegments: number[] = [];
     for (let i = 0; i < particleCount; i++) {
@@ -46,9 +47,12 @@ const NetworkBackground: React.FC = () => {
     return new Float32Array(lineSegments);
   }, [positions, particleCount]);
 
-  // Animate rotation and gentle floating effect
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
+
+    // Throttle updates to ~60fps (16ms)
+    if (time - lastTimeRef.current < 0.016) return;
+    lastTimeRef.current = time;
 
     if (pointsRef.current) {
       pointsRef.current.rotation.y = time * 0.1;
@@ -56,6 +60,8 @@ const NetworkBackground: React.FC = () => {
 
       const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
       const posArray = posAttr.array as Float32Array;
+
+      // Update y position with sine wave, based on fixed base y position
       for (let i = 0; i < particleCount; i++) {
         const yBase = positions[i * 3 + 1];
         posArray[i * 3 + 1] = yBase + Math.sin(time * 2 + i) * 0.3;
@@ -76,10 +82,7 @@ const NetworkBackground: React.FC = () => {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            args={[positions.slice(), 3]} // Added args prop
-            count={particleCount}
-            array={positions.slice()}
-            itemSize={3}
+            args={[positions, 3]} // Use positions directly, no slice
           />
         </bufferGeometry>
         <pointsMaterial
@@ -97,10 +100,7 @@ const NetworkBackground: React.FC = () => {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            args={[linePositions, 3]} // Added args prop
-            count={linePositions.length / 3}
-            array={linePositions}
-            itemSize={3}
+            args={[linePositions, 3]} // Use precomputed linePositions directly
           />
         </bufferGeometry>
         <lineBasicMaterial

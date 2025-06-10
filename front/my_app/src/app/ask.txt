@@ -1,0 +1,90 @@
+kindly please inside the follwin component , inside the div with classname "prices" add the follwin with nice ui , 
+
+
+
+
+ 
+import Link from "next/link"
+ 
+
+
+const Page = () =>{
+
+
+    return (
+
+<div className=" ">
+  <div className=" "></div>
+  
+  <div className="  py-5">
+    <div className="container">
+      {/* Logo and Title */}
+      <div className="text-center mb-5">
+        <img 
+            src="/company_logo.png"     
+            alt="Company Logo" 
+            className="logo-img mb-2"
+        />
+
+        <h1 className="page-title mb-4">Service Name</h1>
+        <p className="lead text-light">Service Prices</p>
+      </div>
+
+      {/* Form Card */}
+      <div className="row justify-content-center">
+        <div className="col-12 col-lg-8">
+          <div className="custom_form_style p-4 p-md-5">
+ 
+            <div className="prices">
+
+
+
+
+            </div>
+
+ 
+
+
+
+              {/* Add this right after your submit button div */}
+              <div className="col-12 text-center mt-4 mb-5">
+              <Link href="/" className="back-to-home-link">
+                  <i className="bi bi-arrow-left me-2"></i>
+                  Back to Home Page
+              </Link>
+              </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>     
+    )
+}
+
+
+export default Page
+
+
+
+
+
+parts for : 
+1- wi-fi outdoor prices base on speed : has 3 culumns 5 elements (speed , package , price ) for example package  2 Mbps, 50 GB, 10 $ . 
+2- traffic packages : has 2 culumns 5 elements (  package name , price ) for example package 10 GB , 4 $, 
+3- traffic packages FOR unlimted speed : has 2 culumns 5 elements (  package name , price ) for example package 10 GB , 4 $, 
+
+
+do that as best practise . 
+
+
+
+
+
+
+
+
+
+
