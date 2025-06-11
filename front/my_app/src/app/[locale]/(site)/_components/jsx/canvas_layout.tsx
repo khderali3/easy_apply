@@ -4,6 +4,11 @@ import React, { useState, ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import NetworkBackground from "./NetworkBackground";
 
+
+import LanguageSwitcherComponent from "./languge_switcher/languge_switcher";
+
+
+
 interface CanvasLayoutProps {
   children: ReactNode;
 }
@@ -18,7 +23,13 @@ const CanvasLayout: React.FC<CanvasLayoutProps> = ({ children }) => {
 
   return (
     <div className="page-wrapper">
-      <div
+
+
+
+    <LanguageSwitcherComponent />  
+
+
+      {/* <div
         className="position-fixed top-0 start-0 m-3 rounded shadow-sm"
         style={{
           zIndex: 1050,
@@ -34,7 +45,8 @@ const CanvasLayout: React.FC<CanvasLayoutProps> = ({ children }) => {
           <option value="en">English</option>
           <option value="ar">العربية</option>
         </select>
-      </div>
+      </div> */}
+
 
       {/* 3D Canvas Background */}
       <Canvas

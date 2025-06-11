@@ -5,6 +5,7 @@ import Link from "next/link"
  
 import { useState } from "react";
 
+import { toast } from "react-toastify";
 
 
 interface RequestStatus {
@@ -22,7 +23,7 @@ const [statusData, setStatusData] = useState<RequestStatus[]>([]);
   const [loading, setLoading] = useState(false);
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     setLoading(true);
     // Simulate API call
@@ -46,6 +47,13 @@ const [statusData, setStatusData] = useState<RequestStatus[]>([]);
 
       setLoading(false);
     }, 1500);
+
+    toast.success("this is test message")
+    toast.info("this is test message")
+    toast.warning("this is test message")
+    toast.error("this is test message")
+ 
+
   };
 
 

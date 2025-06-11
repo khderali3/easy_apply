@@ -8,6 +8,75 @@ User = get_user_model()
 
 
 
+class CardLabelRequestAgent(models.Model):
+    title =  models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+    details_ar = models.CharField(max_length=255, blank=True, default="")
+
+
+    def __str__(self):
+        return self.title    
+
+
+
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+
+class CardLabelRequestService(models.Model):
+    title =  models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+    details_ar = models.CharField(max_length=255, blank=True, default="")
+
+    def __str__(self):
+        return self.title    
+
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+    
+
+
+class CardLabelCheckRequest(models.Model):
+    title =  models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+    details_ar = models.CharField(max_length=255, blank=True, default="")
+
+    def __str__(self):
+        return self.title    
+
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+    
+
+class CardLabelServicePrices(models.Model):
+    title =  models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+    details_ar = models.CharField(max_length=255, blank=True, default="")
+
+    def __str__(self):
+        return self.title    
+
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+
+
+
+
 
 class RequestService(models.Model):
     full_name = models.CharField(max_length=100)
@@ -23,11 +92,15 @@ class RequestService(models.Model):
 
     created_ip_address = models.GenericIPAddressField(null=True, blank=True) 
 
+
     STATUS_OPTIONS = [
-        ('received_request', 'received request'),
-        ('replied_to_client', 'replied to client'),
+        ('pinding', 'Pinding'),
+        ('complated ', 'Complated'),
     ]
-    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='received_request')
+
+    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
+
+    result_note  = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return self.full_name    
@@ -74,10 +147,12 @@ class RequestAgent(models.Model):
 
 
     STATUS_OPTIONS = [
-        ('received_request', 'received request'),
-        ('replied_to_client ', 'replied to client '),
+        ('pinding', 'Pinding'),
+        ('complated ', 'Complated'),
     ]
-    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='received_request')
+
+    status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
+    result_note  = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return self.full_name 
@@ -143,5 +218,8 @@ class UnlimitedSpeedTrafficPackagePrice(models.Model):
     
     def __str__(self):
         return f"{self.traffic}"
+
+
+
 
 

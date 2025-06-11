@@ -1,17 +1,44 @@
+ "use client"
  
+
+import { useTranslations, useLocale } from "next-intl";
+
 import React  from "react";
  
 
 import Link from "next/link";
  
+
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+
+
 const Page: React.FC = () => {
  
+ 
+  const  t = useTranslations()
+
+
+
+useEffect( ()=> {
+
+
+} ,[] )
+
+
 
 return (
   <div>
     <div className="text-center mb-5">
       <img src="/company_logo.png" alt="Logo" className="logo-img" />
-      <h1 className="page-title">Wi-Fi Outdoor Service</h1>
+      {/* <h1 className="page-title">Wi-Fi Outdoor Service</h1> */}
+
+
+
+      <h1 className="page-title"> {t('test')} </h1>
+
+
+
     </div>
 
     <div className="container">

@@ -1,14 +1,56 @@
 
 from ..models import (RequestService, RequestAgent,
-                       SpeedPackagePrice, TrafficPackagePrice, UnlimitedSpeedTrafficPackagePrice
+                       SpeedPackagePrice, TrafficPackagePrice, UnlimitedSpeedTrafficPackagePrice,
+                       CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices
                       
                       )
 
 from rest_framework import serializers
+ 
 
 
 
-from rest_framework import serializers
+class CardLabelCheckRequestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CardLabelCheckRequest
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+
+
+
+class CardLabelRequestAgentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CardLabelRequestAgent
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+class CardLabelRequestServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CardLabelRequestService
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+
+class CardLabelServicePricesServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CardLabelServicePrices
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+
+
+
+
+
+
 
 
 

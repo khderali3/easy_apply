@@ -1,13 +1,16 @@
 
-import "@/app/(site)/_components/assets/css/bootstrap.min.css"
+import "@/app/[locale]/(site)/_components/assets/css/bootstrap.min.css"
+
+
+
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import "@/app/globals.css";
 
 
 
-import "@/app/(site)/_components/assets/css/style.css"
+import "@/app/[locale]/(site)/_components/assets/css/style.css"
 
-
+import CustomProvider from "./_components/redux/provider";
  
 import Script from "next/script";
  
@@ -16,18 +19,28 @@ import CanvasLayout from "./_components/jsx/canvas_layout";
 
 
 
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+ 
+ 
+import Setup from "./_components/utils/setup";
  
 
 export default  async function   RootLayout(
     {children} :  Readonly<{ children: React.ReactNode;}>
   ) {
 
-
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
   
      
-    <html   >
+    <html   
+    lang={locale}
+    dir={ locale === "ar" ? "rtl" : " ltr"}
+
+    >
 
 
     <head>
@@ -45,23 +58,33 @@ export default  async function   RootLayout(
       
       <body >
 
-  
 
-      <div className="    "> 
-
- 
-
-
-      <CanvasLayout>
-        {children}
-      </CanvasLayout>
+      <NextIntlClientProvider messages={messages}>
 
 
 
+              <CustomProvider>
+                 <Setup />
+                  <div className=""> 
+           
 
 
-      </div>
-  
+
+                    <CanvasLayout>
+                     
+
+                      {children}
+                    </CanvasLayout>
+
+
+                  </div>
+            
+              </CustomProvider>
+
+      </NextIntlClientProvider>
+
+
+
         <Script src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/js/bootstrap.bundle.min.js`} />
 
 

@@ -3,12 +3,17 @@ from rest_framework.views import APIView, status, Response
 
 
 from ..serializers_package.site_serializer import (RequestAgentSerializer, RequestServiceSerializer, CheckRequestStatusSerializer, SpeedPackagePriceSerializer,
-                                                    GetPricesInfoSerializer , UnlimitedSpeedTrafficPackagePriceSerializer , TrafficPackagePriceSerializer                                   
+                                                    GetPricesInfoSerializer , UnlimitedSpeedTrafficPackagePriceSerializer , TrafficPackagePriceSerializer ,                                  
+                                                    CardLabelCheckRequestSerializer, CardLabelRequestAgentSerializer, CardLabelRequestServiceSerializer,
+                                                    CardLabelServicePricesServiceSerializer
 
                                                    )
 
 
-from ..models import RequestAgent, RequestService, SpeedPackagePrice, UnlimitedSpeedTrafficPackagePrice, TrafficPackagePrice
+from ..models import (RequestAgent, RequestService, SpeedPackagePrice, UnlimitedSpeedTrafficPackagePrice, TrafficPackagePrice,
+                    CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices
+                     
+                    )
 
 
 from rest_framework.permissions import AllowAny
@@ -31,6 +36,58 @@ from customCaptchaApp.utils import verify_image_captcha
 
 
 import json
+
+
+
+
+class GetAppIndexView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        key = request.query_params.get("q")
+
+        if key:
+            if key == "card_check_request_label":
+                card_check_request_label_obj = CardLabelCheckRequest.get_solo()
+                return Response({
+                    "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+                }, status=status.HTTP_200_OK)
+ 
+            elif key == "card_request_agent_label":
+                card_request_agent_label_obj = CardLabelRequestAgent.get_solo()
+                return Response({
+                "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+                }, status=status.HTTP_200_OK)
+
+            elif key == "card_request_service_label":
+                card_request_service_label_obj = CardLabelRequestService.get_solo()
+                return Response({
+                "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+                }, status=status.HTTP_200_OK)
+
+            elif key == "card_service_prices_label":
+                card_service_prices_label_obj = CardLabelServicePrices.get_solo()
+                return Response({
+                "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+                }, status=status.HTTP_200_OK)
+
+            else:
+                return Response({'message' : 'your key is invalied!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        card_check_request_label_obj = CardLabelCheckRequest.get_solo()
+        card_request_agent_label_obj = CardLabelRequestAgent.get_solo()
+        card_request_service_label_obj = CardLabelRequestService.get_solo()
+        card_service_prices_label_obj = CardLabelServicePrices.get_solo()
+
+        return Response({
+            "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+            "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+            "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+            "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+
+        }, status=status.HTTP_200_OK)
 
 
 
