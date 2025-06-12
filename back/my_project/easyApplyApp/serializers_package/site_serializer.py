@@ -1,12 +1,21 @@
 
 from ..models import (RequestService, RequestAgent,
                        SpeedPackagePrice, TrafficPackagePrice, UnlimitedSpeedTrafficPackagePrice,
-                       CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices
+                       CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, AppIndexTitle
                       
                       )
 
 from rest_framework import serializers
  
+
+
+class AppIndexTitleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AppIndexTitle
+        fields = "__all__"
+        read_only_fields = ['id']
+
 
 
 

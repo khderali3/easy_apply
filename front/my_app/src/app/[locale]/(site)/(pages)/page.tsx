@@ -1,41 +1,47 @@
- "use client"
  
-
-import { useTranslations, useLocale } from "next-intl";
 
 import React  from "react";
  
 
 import Link from "next/link";
+import { getLocale } from "next-intl/server";
+ 
+  
+
+const Page: React.FC = async   () =>  {
+
+
+    const  locale = await getLocale()
+    let data : any = {}
+  
+    try {
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/easyApplyApp/site/get_app_index/`,
+      { cache: 'no-store',}  // Disable caching
+      );
+      data = await res.json();
+    } catch (error) {
+      
+    }
+
+
  
 
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-
-
-const Page: React.FC = () => {
  
- 
-  const  t = useTranslations()
-
-
-
-useEffect( ()=> {
-
-
-} ,[] )
-
-
-
 return (
   <div>
     <div className="text-center mb-5">
-      <img src="/company_logo.png" alt="Logo" className="logo-img" />
-      {/* <h1 className="page-title">Wi-Fi Outdoor Service</h1> */}
+
+      {data?.compoany_logo ?
+            <img src={data.compoany_logo} alt="Logo" className="logo-img" />
+      :    <img src="/company_logo.png" alt="Logo" className="logo-img" />
+
+      }
 
 
 
-      <h1 className="page-title"> {t('test')} </h1>
+
+      <h1 className="page-title"> {locale === "ar" ?  data?.app_index_title?.title_ar :  data?.app_index_title?.title } </h1>
 
 
 
@@ -43,18 +49,17 @@ return (
 
     <div className="container">
       <div className="row g-4 justify-content-center">
-        {/* Card 1 */}
+ 
         <div className="col-12 col-sm-6 col-lg-3 d-flex">
           <Link href={`/agent_request`} className="service-card-link w-100">
             <div className="service-card h-100">
               <div className="card-body text-center">
                 <div className="mb-2">
-                  <i className="bi bi-wifi display-4 text-info"></i>
+                  <i className={`bi display-4 text-info ${data?.card_request_agent_label?.bootstrap_icon}`}></i>
                 </div>
-                <h5 className="card-title">Request to be agent or redistributer</h5>
+                <h5 className="card-title">  { locale === "ar" ? data?.card_request_agent_label?.title_ar  :  data?.card_request_agent_label?.title }</h5>
                 <p className="card-text mb-3">
-                  Description for ISP service card number. This card floats above
-                  the animated network background.
+                  { locale === "ar" ? data?.card_request_agent_label?.details_ar :  data?.card_request_agent_label?.details}
                  </p>
               </div>
             </div>
@@ -67,12 +72,12 @@ return (
             <div className="service-card h-100">
               <div className="card-body text-center">
                 <div className="mb-2">
-                  <i className="bi bi-wifi display-4 text-info"></i>
+                  <i className={`bi display-4 text-info ${data?.card_request_service_label?.bootstrap_icon}`}></i>
                 </div>
-                <h5 className="card-title">request to subscripe wi-fi serive</h5>
+                <h5 className="card-title">  { locale === "ar" ? data?.card_request_service_label?.title_ar  :  data?.card_request_service_label?.title }</h5>
                 <p className="card-text mb-3 ">
-                  Description for ISP service card number. This card floats above
-                  the animated network background.
+                  { locale === "ar" ? data?.card_request_service_label?.details_ar :  data?.card_request_service_label?.details}
+
                 </p>
               </div>
             </div>
@@ -85,12 +90,11 @@ return (
             <div className="service-card h-100">
               <div className="card-body text-center">
                 <div className="mb-2">
-                  <i className="bi bi-wifi display-4 text-info"></i>
+                  <i className={`bi display-4 text-info ${data?.card_check_request_label?.bootstrap_icon}`}></i>
                 </div>
-                <h5 className="card-title">check your request status</h5>
+                <h5 className="card-title">  { locale === "ar" ? data?.card_check_request_label?.title_ar  :  data?.card_check_request_label?.title }</h5>
                 <p className="card-text mb-3">
-                  Description for ISP service card number. This card floats above
-                  the animated network background.
+                  { locale === "ar" ? data?.card_check_request_label?.details_ar :  data?.card_check_request_label?.details}
                 </p>
               </div>
             </div>
@@ -103,12 +107,12 @@ return (
             <div className="service-card h-100">
               <div className="card-body text-center ">
                 <div className="mb-2">
-                  <i className="bi bi-wifi display-4 text-info"></i>
+                  <i className={`bi display-4 text-info ${data?.card_service_prices_label?.bootstrap_icon}`}></i>
                 </div>
-                <h5 className="card-title">Service Prices</h5>
+                <h5 className="card-title">  { locale === "ar" ? data?.card_service_prices_label?.title_ar  :  data?.card_service_prices_label?.title }</h5>
                 <p className="card-text mb-3 ">
-                  Description for ISP service card number. This card floats above
-                  the animated network background.
+                  { locale === "ar" ? data?.card_service_prices_label?.details_ar :  data?.card_service_prices_label?.details}
+
                 </p>
  
               </div>

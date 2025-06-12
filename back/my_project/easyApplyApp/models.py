@@ -8,17 +8,29 @@ User = get_user_model()
 
 
 
+class AppIndexTitle(models.Model):
+    title =  models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+
+
+    def __str__(self):
+        return self.title   
+    
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
 class CardLabelRequestAgent(models.Model):
     title =  models.CharField(max_length=255, blank=True, default="")
     details = models.CharField(max_length=255, blank=True, default="")
     title_ar =  models.CharField(max_length=255, blank=True, default="")
     details_ar = models.CharField(max_length=255, blank=True, default="")
-
+    bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
     def __str__(self):
         return self.title    
-
-
 
     @classmethod
     def get_solo(cls):
@@ -32,6 +44,7 @@ class CardLabelRequestService(models.Model):
     details = models.CharField(max_length=255, blank=True, default="")
     title_ar =  models.CharField(max_length=255, blank=True, default="")
     details_ar = models.CharField(max_length=255, blank=True, default="")
+    bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
     def __str__(self):
         return self.title    
@@ -48,6 +61,7 @@ class CardLabelCheckRequest(models.Model):
     details = models.CharField(max_length=255, blank=True, default="")
     title_ar =  models.CharField(max_length=255, blank=True, default="")
     details_ar = models.CharField(max_length=255, blank=True, default="")
+    bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
     def __str__(self):
         return self.title    
@@ -63,6 +77,7 @@ class CardLabelServicePrices(models.Model):
     details = models.CharField(max_length=255, blank=True, default="")
     title_ar =  models.CharField(max_length=255, blank=True, default="")
     details_ar = models.CharField(max_length=255, blank=True, default="")
+    bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
     def __str__(self):
         return self.title    

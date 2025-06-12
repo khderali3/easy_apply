@@ -20,8 +20,8 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         # Prevent creation of multiple instances via admin
         return False
 
-    # def has_delete_permission(self, request, obj=None):
-    #     return False
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def changelist_view(self, request, extra_context=None):
         # Automatically redirect to the singleton instance

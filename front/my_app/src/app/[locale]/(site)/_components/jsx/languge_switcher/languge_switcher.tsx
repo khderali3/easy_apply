@@ -17,11 +17,7 @@ const LanguageSwitcherComponent = () => {
 
     const newPathname = pathname.replace(/^\/(en|ar)/, `/${e.target.value}`);
 
-
-
-
-
-
+ 
     router.push(newPathname);
 
 

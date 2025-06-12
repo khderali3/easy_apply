@@ -1,68 +1,102 @@
-
-@shared_task(bind=True)
-def send_email_task(self, email_id):
-
-    config = MainConfiguration.get_solo()
-    host = config.smtp_host.strip()
-    log = None  # <--- Define it first
-
-    try:
-        log = QueuedEmail.objects.get(id=email_id)
-        log.status = 'sending'
-        log.save()
-  
-
-        connection = CustomEmailBackend(
-            host= host,
-            
-            port=config.smtp_port,
-            username=config.smtp_host_user,
-            password=config.smtp_host_user_password,
-            use_tls=config.smtp_use_tls,
-            use_ssl=config.smtp_use_ssl,
-            fail_silently=False,
-            timeout=15,
-        )
-
-        if log.is_html:
-            plain_text_body = strip_tags(log.body)
-            email = EmailMultiAlternatives(
-                subject=log.subject,
-                body=plain_text_body,
-                from_email=config.smtp_host_user,
-                to=[log.to_email],
-                connection=connection,
-            )
-            email.attach_alternative(log.body, "text/html")
-        else:
-            email = EmailMultiAlternatives(
-                subject=log.subject,
-                body=log.body,
-                from_email=config.smtp_host_user,
-                to=[log.to_email],
-                connection=connection,
-            )
-
-        email.send()
-        log.status = 'sent'
-        log.save()
+hello , i have the foolwin view :
 
 
-    except Exception as e:
-        if log:
-            log.status = 'failed'
+class GetAppIndexView(APIView):
+    permission_classes = [AllowAny]
 
-            log.last_error_message = f" {host} -  {str(e)}"
-            log.last_error_message_date = timezone.now()
-            log.retries += 1
-            log.save()
+    def get(self, request):
 
+        app_index_title_obj = AppIndexTitle.get_solo()
+        main_config = MainConfiguration.get_solo()
+        compoany_logo = None
+        try:
+            if main_config.company_logo:
+                compoany_logo = request.build_absolute_uri(main_config.company_logo.url)  # full absolute URL
+        except:
+            pass
+
+
+        key = request.query_params.get("q")
+
+        if key:
+            if key == "card_check_request_label":
+                card_check_request_label_obj = CardLabelCheckRequest.get_solo()
+                return Response({
+                    "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+                    "compoany_logo" : compoany_logo,
+                    "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
+                }, status=status.HTTP_200_OK)
  
+            elif key == "card_request_agent_label":
+                card_request_agent_label_obj = CardLabelRequestAgent.get_solo()
+                return Response({
+                "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+                }, status=status.HTTP_200_OK)
+
+            elif key == "card_request_service_label":
+                card_request_service_label_obj = CardLabelRequestService.get_solo()
+                return Response({
+                "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
+                }, status=status.HTTP_200_OK)
+
+            elif key == "card_service_prices_label":
+                card_service_prices_label_obj = CardLabelServicePrices.get_solo()
+                return Response({
+                "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
+                }, status=status.HTTP_200_OK)
+
+            else:
+                return Response({'message' : 'your key is invalied!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        card_check_request_label_obj = CardLabelCheckRequest.get_solo()
+        card_request_agent_label_obj = CardLabelRequestAgent.get_solo()
+        card_request_service_label_obj = CardLabelRequestService.get_solo()
+        card_service_prices_label_obj = CardLabelServicePrices.get_solo()
+
+        return Response({
+            "compoany_logo" : compoany_logo,
+            "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data,
+            "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+            "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+            "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+            "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+
+        }, status=status.HTTP_200_OK)
 
 
 
-aftert email send :
- log.status = 'sent' and save  but befaure i use   log.status = 'sending' and save ,
 
- is this rite or i save towic on same object , is there any problem or normal , is i need to get object befure change and save or nor problem ?
- 
+
+
+all details for:
+            "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+            "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+            "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+            "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+
+are same they include :
+
+    title =  models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=255, blank=True, default="")
+    title_ar =  models.CharField(max_length=255, blank=True, default="")
+    details_ar = models.CharField(max_length=255, blank=True, default="")
+    bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
+
+so i just want to return for this kes a list of data and then in front end do a map eatch object will be a card , 
+
+the response shuld be like the follwin :
+            "compoany_logo" : compoany_logo,
+            "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data,
+            "data" : list of objects 
+
+even if there is  q "   key = request.query_params.get("q") "  the return shuld be same return is list with single object , how to do that  

@@ -5,13 +5,13 @@ from rest_framework.views import APIView, status, Response
 from ..serializers_package.site_serializer import (RequestAgentSerializer, RequestServiceSerializer, CheckRequestStatusSerializer, SpeedPackagePriceSerializer,
                                                     GetPricesInfoSerializer , UnlimitedSpeedTrafficPackagePriceSerializer , TrafficPackagePriceSerializer ,                                  
                                                     CardLabelCheckRequestSerializer, CardLabelRequestAgentSerializer, CardLabelRequestServiceSerializer,
-                                                    CardLabelServicePricesServiceSerializer
+                                                    CardLabelServicePricesServiceSerializer, AppIndexTitleSerializer
 
                                                    )
 
 
 from ..models import (RequestAgent, RequestService, SpeedPackagePrice, UnlimitedSpeedTrafficPackagePrice, TrafficPackagePrice,
-                    CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices
+                    CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, AppIndexTitle
                      
                     )
 
@@ -33,7 +33,7 @@ from systemSettingsApp.general_utils.custom_utils import get_client_ip
 
 from customCaptchaApp.utils import verify_image_captcha
 
-
+from systemSettingsApp.models import MainConfiguration
 
 import json
 
@@ -45,6 +45,16 @@ class GetAppIndexView(APIView):
 
     def get(self, request):
 
+        app_index_title_obj = AppIndexTitle.get_solo()
+        main_config = MainConfiguration.get_solo()
+        compoany_logo = None
+        try:
+            if main_config.company_logo:
+                compoany_logo = request.build_absolute_uri(main_config.company_logo.url)  # full absolute URL
+        except:
+            pass
+
+
         key = request.query_params.get("q")
 
         if key:
@@ -52,24 +62,35 @@ class GetAppIndexView(APIView):
                 card_check_request_label_obj = CardLabelCheckRequest.get_solo()
                 return Response({
                     "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
+                    "compoany_logo" : compoany_logo,
+                    "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
                 }, status=status.HTTP_200_OK)
  
             elif key == "card_request_agent_label":
                 card_request_agent_label_obj = CardLabelRequestAgent.get_solo()
                 return Response({
                 "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
                 }, status=status.HTTP_200_OK)
 
             elif key == "card_request_service_label":
                 card_request_service_label_obj = CardLabelRequestService.get_solo()
                 return Response({
                 "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
                 }, status=status.HTTP_200_OK)
 
             elif key == "card_service_prices_label":
                 card_service_prices_label_obj = CardLabelServicePrices.get_solo()
                 return Response({
                 "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
+                "compoany_logo" : compoany_logo,
+                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+
                 }, status=status.HTTP_200_OK)
 
             else:
@@ -82,6 +103,8 @@ class GetAppIndexView(APIView):
         card_service_prices_label_obj = CardLabelServicePrices.get_solo()
 
         return Response({
+            "compoany_logo" : compoany_logo,
+            "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data,
             "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
             "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
             "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
@@ -91,7 +114,7 @@ class GetAppIndexView(APIView):
 
 
 
-
+ 
 class GetPricesInfoView(APIView):
     permission_classes = [AllowAny]
 

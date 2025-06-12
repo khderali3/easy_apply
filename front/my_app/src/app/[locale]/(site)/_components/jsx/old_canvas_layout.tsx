@@ -14,8 +14,13 @@ interface CanvasLayoutProps {
 }
 
 const CanvasLayout: React.FC<CanvasLayoutProps> = ({ children }) => {
- 
- 
+  const [language, setLanguage] = useState("en");
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(e.target.value);
+    // Add your language switching logic here
+  };
+
   return (
     <div className="page-wrapper">
 

@@ -11,21 +11,25 @@ import "@/app/globals.css";
 import "@/app/[locale]/(site)/_components/assets/css/style.css"
 
 import CustomProvider from "./_components/redux/provider";
- 
+
+
+  
+
 import Script from "next/script";
  
  
 import CanvasLayout from "./_components/jsx/canvas_layout";
 
-
+ 
 
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
  
  
 import Setup from "./_components/utils/setup";
- 
 
+
+ 
 export default  async function   RootLayout(
     {children} :  Readonly<{ children: React.ReactNode;}>
   ) {
@@ -74,6 +78,9 @@ export default  async function   RootLayout(
                      
 
                       {children}
+
+
+                      
                     </CanvasLayout>
 
 
