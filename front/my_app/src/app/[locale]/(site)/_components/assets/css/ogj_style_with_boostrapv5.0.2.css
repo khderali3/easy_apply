@@ -308,7 +308,7 @@
 
 
 
- 
+/* 
 
 
 .custom-error-box {
@@ -336,9 +336,9 @@
 .custom-error-message {
   font-size: 1rem;
   line-height: 1.5;
-}  
+} */
 
-  @keyframes fadeInError {
+/* @keyframes fadeInError {
   from {
     opacity: 0;
     transform: translateY(-8px);
@@ -347,4 +347,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-} 
+} */

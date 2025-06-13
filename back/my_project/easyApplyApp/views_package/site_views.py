@@ -44,6 +44,7 @@ class GetAppIndexView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        # return Response({'message' : "error from django"}, status=status.HTTP_400_BAD_REQUEST)
 
         app_index_title_obj = AppIndexTitle.get_solo()
         main_config = MainConfiguration.get_solo()

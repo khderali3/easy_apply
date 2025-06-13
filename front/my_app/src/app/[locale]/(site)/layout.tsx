@@ -1,11 +1,12 @@
 
-import "@/app/[locale]/(site)/_components/assets/css/bootstrap.min.css"
+ 
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-
+ 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import "@/app/globals.css";
 
+
+import "@/app/globals.css";
 
 
 import "@/app/[locale]/(site)/_components/assets/css/style.css"
@@ -54,13 +55,21 @@ export default  async function   RootLayout(
     
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></link> */}
-      <meta name="theme-color" content="#000000" />
+       <meta name="theme-color" content="#000000" />
+ 
 
      </head>
 
       
       <body >
+
+
+
+
+
+
+
+
 
 
       <NextIntlClientProvider messages={messages}>
@@ -71,11 +80,17 @@ export default  async function   RootLayout(
                  <Setup />
                   <div className=""> 
            
+ 
 
 
 
                     <CanvasLayout>
                      
+
+ 
+
+
+
 
                       {children}
 
@@ -92,7 +107,8 @@ export default  async function   RootLayout(
 
 
 
-        <Script src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/js/bootstrap.bundle.min.js`} />
+        {/* <Script src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/js/bootstrap.bundle.min.js`} /> */}
+        <Script src="/js/bootstrap.bundle.min.js" strategy="afterInteractive" />
 
 
       </body>

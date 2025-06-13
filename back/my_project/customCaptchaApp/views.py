@@ -36,10 +36,8 @@ class GenerateImageCaptchaView(APIView):
 
         if not getattr(config, "is_captcha_enabled", False):
             return Response({
-                "captcha_id": "",
-                "captcha_image": "",
                 "message": "CAPTCHA is disabled."
-            }, status=status.HTTP_200_OK)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -1,11 +1,40 @@
-
+"use client"
 
  
 import Link from "next/link"
- 
+import { usePageDataFetcher } from "@/app/public_utils/hooks/custom_api_hooks"
+import { useEffect } from "react"
+
 
 
 const Page = () =>{
+
+   const { fetchData, isLoading : isCaptchaLoading , data : captcha_result } = usePageDataFetcher()
+
+
+
+
+
+   
+
+  useEffect(()=>{
+     console.log(captcha_result)
+  } , [captcha_result]  )
+
+
+  const requestCaptcha = () => {
+    fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/captcha/generate_image_captcha/`, "GET")
+
+  }
+
+
+
+
+  useEffect(()=>{
+    requestCaptcha()
+  } , []  )
+
+
 
 
     return (
@@ -31,7 +60,7 @@ const Page = () =>{
       <div className="row justify-content-center">
         <div className="col-12 col-lg-8">
           <div className="custom_form_style p-4 p-md-5">
-            <form>
+            <form   >
               <div className="row g-4">
                 {/* Personal Information */}
                 <div className="col-12 col-md-6">
@@ -41,22 +70,13 @@ const Page = () =>{
                       className="form-control bg-transparent text-light" 
                       id="fullName" 
                       placeholder="Full Name"
+                      autoComplete="new-password" 
                     />
                     <label htmlFor="fullName" className="text-light">Full Name</label>
                   </div>
                 </div>
                 
-                <div className="col-12 col-md-6">
-                  <div className="form-floating">
-                    <input 
-                      type="email" 
-                      className="form-control bg-transparent text-light" 
-                      id="email" 
-                      placeholder="Email Address"
-                    />
-                    <label htmlFor="email" className="text-light">Email Address</label>
-                  </div>
-                </div>
+ 
                 
                 <div className="col-12 col-md-6">
                   <div className="form-floating">
@@ -65,137 +85,137 @@ const Page = () =>{
                       className="form-control bg-transparent text-light" 
                       id="phone" 
                       placeholder="Phone Number"
+                      autoComplete="new-password" 
+
                     />
                     <label htmlFor="phone" className="text-light">Phone Number</label>
                   </div>
                 </div>
-                
+
                 <div className="col-12 col-md-6">
                   <div className="form-floating">
+                    <input 
+                      type="tel" 
+                      className="form-control bg-transparent text-light" 
+                      id="City" 
+                      placeholder="City"
+                      autoComplete="new-password" 
 
-                    {/* <select 
-                      className="form-select bg-transparent text-light" 
-                      id="country"
-                    >
-                      <option value="">Select Country</option>
-                      <option value="US">United States</option>
-                      <option value="UK">United Kingdom</option>
-                      <option value="CA">Canada</option>
-                    </select> */}
-
-
-                    <select 
-                    className="form-select bg-transparent text-light border-info" 
-                    id="country"
-                    style={{background: "transparent", color: "white"}}
-                    >
-                    <option value="" style={{background: "#003366"}}>Select Country</option>
-                    <option value="US" style={{background: "#003366"}}>United States</option>
-                    <option value="UK" style={{background: "#003366"}}>United Kingdom</option>
-                    <option value="CA" style={{background: "#003366"}}>Canada</option>
-                    </select>
-
-
-
-
-
-                    <label htmlFor="country" className="text-light">Country</label>
+                    />
+                    <label htmlFor="City" className="text-light">City</label>
                   </div>
                 </div>
-                
+  
+
+                <div className="col-12  ">
+                  <div className="form-floating">
+                    <input 
+                      type="tel" 
+                      className="form-control bg-transparent text-light" 
+                      id="Address" 
+                      placeholder="Address"
+                      autoComplete="new-password" 
+                    />
+                    <label htmlFor="Address" className="text-light">Address</label>
+                  </div>
+                </div>
+
  
 
+
                 <div className="mb-4">
-                <label className="d-block text-light mb-2">Partner Type</label>
-                
-                <div className="d-flex flex-row gap-4"> {/* Add this flex container */}
-                    <div className="form-check">
-                    <input 
-                        className="form-check-input border-info bg-transparent" 
-                        type="radio" 
-                        name="partnerType" 
-                        id="agent" 
-                        value="agent"
-                    />
-                    <label className="form-check-label text-light ms-2" htmlFor="agent">
-                        Agent
-                    </label>
-                    </div>
-                    
-                    <div className="form-check">
-                    <input 
-                        className="form-check-input border-info bg-transparent" 
-                        type="radio" 
-                        name="partnerType" 
-                        id="reseller" 
-                        value="reseller"
-                    />
-                    <label className="form-check-label text-light ms-2" htmlFor="reseller">
-                        Reseller
-                    </label>
-                    </div>
-                </div>
-                </div>
+                  <label className="d-block text-light mb-2">Agent Type</label>
+                  
+                  <div className="d-flex flex-row gap-4"> {/* Add this flex container */}
+                      <div className="form-check">
+                      <input 
+                          className="form-check-input border-info bg-transparent" 
+                          type="radio" 
+                          name="agentType" 
+                          id="Sub_Provider" 
+                          value="agent"
+                      />
+                      <label className="form-check-label text-light ms-2" htmlFor="Sub_Provider">
+                          Sub-Provider
+                      </label>
+                      </div>
+                      
+                      <div className="form-check">
+                        <input 
+                            className="form-check-input border-info bg-transparent" 
+                            type="radio" 
+                            name="agentType" 
+                            id="Distributor" 
+                            value="Distributor"
+                        />
+                        <label className="form-check-label text-light ms-2" htmlFor="Distributor">
+                            Distributor
+                        </label>
+                      </div>
+
+                      <div className="form-check">
+                        <input 
+                            className="form-check-input border-info bg-transparent" 
+                            type="radio" 
+                            name="agentType" 
+                            id="POS" 
+                            value="reseller"
+                        />
+                        <label className="form-check-label text-light ms-2" htmlFor="POS">
+                            POS
+                        </label>
+                      </div>
 
 
 
 
-
-
-                {/* Business Information */}
-                <div className="col-12">
-                  <hr className="my-4 border-info opacity-25" />
-                  <h5 className="text-info mb-4">Business Information</h5>
-                </div>
-                
-                <div className="col-12 col-md-6">
-                  <div className="form-floating">
-                    <input 
-                      type="text" 
-                      className="form-control bg-transparent text-light" 
-                      id="company" 
-                      placeholder="Company Name"
-                    />
-                    <label htmlFor="company" className="text-light">Company Name (if applicable)</label>
                   </div>
                 </div>
-                
-                <div className="col-12 col-md-6">
-                  <div className="form-floating">
-                    <input 
-                      type="text" 
-                      className="form-control bg-transparent text-light" 
-                      id="website" 
-                      placeholder="Website"
-                    />
-                    <label htmlFor="website" className="text-light">Website (if applicable)</label>
-                  </div>
-                </div>
-                
-                <div className="col-12">
-                  <div className="form-floating">
-                    <textarea 
-                      className="form-control bg-transparent text-light" 
-                      id="experience" 
-                      placeholder="Your experience"
-                      style={{height: "100px"}}
-                    ></textarea>
-                    <label htmlFor="experience" className="text-light">Relevant Experience</label>
-                  </div>
-                </div>
-                
-                <div className="col-12">
-                  <div className="form-check">
-                    <input 
-                      className="form-check-input" 
-                      type="checkbox" 
-                      id="terms"
-                    />
-                    <label className="form-check-label text-light" htmlFor="terms">
-                      I agree to the terms and conditions
-                    </label>
-                  </div>
-                </div>
+
+
+
+
+{/* CAPTCHA Field */}
+<div className="col-12 mb-4">
+  <label className="form-label text-light mb-2">Security Check (CAPTCHA)</label>
+  <div className="d-flex align-items-center gap-3">
+    {captcha_result?.captcha_image && (
+      <img
+        src={captcha_result?.captcha_image}
+        alt="Captcha"
+        style={{ height: "50px", borderRadius: "5px" }}
+      />
+    )}
+    <button
+      type="button"
+      onClick={requestCaptcha}
+      className="btn btn-outline-light btn-sm"
+      title="Refresh CAPTCHA"
+      disabled={isCaptchaLoading}
+    >
+      <i className="bi bi-arrow-clockwise"></i>
+    </button>
+  </div>
+
+  <div className="mt-3 col-md-4">
+    <input
+      type="text"
+      className="form-control bg-transparent text-light"
+      id="captchaInput"
+      placeholder="Enter the text you see above"
+      autoComplete="new-password"
+    />
+  </div>
+</div>
+
+
+
+
+
+
+
+
+ 
                 
                 <div className="col-12 text-center mt-4">
                   <button 

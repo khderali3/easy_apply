@@ -153,7 +153,6 @@ class RequestAgent(models.Model):
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, db_index=True)
     city= models.CharField(max_length=50)
-    area = models.CharField(max_length=50)
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)  # Set once when created
     updated = models.DateTimeField(auto_now=True)      # Updated every time saved

@@ -52,44 +52,79 @@ export function usePageDataFetcher() {
 
 
 
-const fetchData: any = async (
-  pageUrl: string,
-  method_type: MethodType,
-  body: any = null,
-  onSuccessMessage: string | null = null,
-  onErrorMessage: string | null = null,
-  handleFunctionAfterSuccess: any = null
-) => {
-  setIsLoading(true);
-  try {
-    const response = await customFetch({
-      url: pageUrl,
-      method: method_type,
-      body: body,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).unwrap(); // Will throw if the backend returns an error
 
-    setData(response);
+  const fetchData: any =  async (
+    pageUrl: string,
+    method_type: MethodType,
+    body : any = null,
+    onSuccessMessage:string|null = null ,
+    onErrorMessage:string|null = null, 
+    handleFunctionAfterSuccess : any = null 
+       
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await customFetch({
+        url: pageUrl,
+        method: method_type,
+        body: body,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
 
-    const msg = onSuccessMessage || getSuccessMessage(method_type);
-    if (msg) toast.success(msg);
+      if (response?.data) {
+        setData(response.data);
 
-    if (handleFunctionAfterSuccess) handleFunctionAfterSuccess();
 
-  } catch (error: any) {
-    const fallbackMsg = onErrorMessage || getErrorMessageByMethod(method_type);
-    if (fallbackMsg) toast.error(fallbackMsg);
+        if (!onSuccessMessage) {
+           const msg = getSuccessMessage(method_type);
+          if (msg) {
+            toast.error(msg);
+          }
 
-    const extracted = getErrorMessage(error);
-    toast.error(extracted);
-    console.log("Error fetching data:", error);
+        } else {
+          toast.success(onSuccessMessage);
+        }
 
-  } finally {
-    setIsLoading(false);
-  }
-};
+ 
+        if(handleFunctionAfterSuccess){handleFunctionAfterSuccess()}
+
+       } else {
+
+
+       if (!onErrorMessage) {
+          const msg = getErrorMessageByMethod(method_type);
+          if (msg) {
+            toast.error(msg);
+          }
+        
+      } else {
+        toast.error(onErrorMessage);
+      }
+
+        toast.error(getErrorMessage(response?.error?.data));
+      } 
+
+    } catch (error) {
+      const message = getErrorMessage(error);
+
+
+       if (!onErrorMessage) {
+          const msg = getErrorMessageByMethod(method_type);
+          if (msg) {
+            toast.error(msg);
+          }
+      } else {
+        toast.error(onErrorMessage);
+      }
+
+      toast.error(message);
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  } 
 
   return {
     fetchData,

@@ -26,7 +26,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = "http://localhost:3000/ar"
+url = "http://localhost:3000/en/agent_request"
 
 response = requests.get(url)
 

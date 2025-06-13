@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html dir=" ltr" lang="en">
  <head>
   <meta charset="utf-8"/>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <link data-precedence="next" href="/_next/static/css/fc4820478b0af05c.css" rel="stylesheet"/>
-  <link data-precedence="next" href="/_next/static/css/32300a44191f1a85.css" rel="stylesheet"/>
-  <link data-precedence="next" href="/_next/static/css/6205609b5b4f166c.css" rel="stylesheet"/>
-  <link data-precedence="next" href="/_next/static/css/ef46db3751d8e999.css" rel="stylesheet"/>
-  <link as="script" fetchpriority="low" href="/_next/static/chunks/webpack-87cf03ee8341e253.js" rel="preload"/>
-  <link as="script" href="http://localhost:3000/js/bootstrap.bundle.min.js" rel="preload"/>
+  <link as="image" href="/company_logo.png" rel="preload"/>
+  <link data-precedence="next_static/css/app/[locale]/(site)/layout.css" href="/_next/static/css/app/%5Blocale%5D/(site)/layout.css?v=1749827007678" rel="stylesheet"/>
+  <link as="script" fetchpriority="low" href="/_next/static/chunks/webpack.js?v=1749827007678" rel="preload"/>
+  <link as="script" href="/js/bootstrap.bundle.min.js" rel="preload"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <meta content="#000000" name="theme-color"/>
@@ -18,139 +16,145 @@
  </head>
  <body>
   <!-- -->
-  <!--$?-->
-  <template id="B:0">
-  </template>
-  <div class="d-flex align-items-center justify-content-center min-vh-100" style="background:linear-gradient(135deg, #001f3f 0%, #003366 100%)">
-   <h1 class="text-light">
-    Loading Content....
-   </h1>
+  <!--$-->
+  <section aria-atomic="false" aria-label="Notifications Alt+T" aria-live="polite" aria-relevant="additions text" class="Toastify">
+  </section>
+  <div class="">
+   <div class="page-wrapper">
+    <div class="position-fixed top-0 m-3 rounded shadow-sm start-0" style="z-index:1050;width:140px">
+     <select aria-label="Select language" class="form-select form-select-sm">
+      <option selected="" value="en">
+       English
+      </option>
+      <option value="ar">
+       العربية
+      </option>
+     </select>
+    </div>
+    <div class="canvas-background" style="position:relative;width:100%;height:100%;overflow:hidden;pointer-events:auto">
+     <div style="width:100%;height:100%">
+      <canvas style="display:block">
+      </canvas>
+     </div>
+    </div>
+    <div class="foreground-container container py-5">
+     <div class="">
+      <div class="">
+      </div>
+      <div class="py-5">
+       <div class="container">
+        <div class="text-center mb-5">
+         <img alt="Company Logo" class="logo-img mb-2" src="/company_logo.png"/>
+         <h1 class="page-title mb-4">
+          Agent/Reseller Application
+         </h1>
+         <p class="lead text-light">
+          Join our network of partners and grow your business with us
+         </p>
+        </div>
+        <div class="row justify-content-center">
+         <div class="col-12 col-lg-8">
+          <div class="custom_form_style p-4 p-md-5">
+           <form>
+            <div class="row g-4">
+             <div class="col-12 col-md-6">
+              <div class="form-floating">
+               <input autocomplete="new-password" class="form-control bg-transparent text-light" id="fullName" placeholder="Full Name" type="text"/>
+               <label class="text-light" for="fullName">
+                Full Name
+               </label>
+              </div>
+             </div>
+             <div class="col-12 col-md-6">
+              <div class="form-floating">
+               <input autocomplete="new-password" class="form-control bg-transparent text-light" id="phone" placeholder="Phone Number" type="tel"/>
+               <label class="text-light" for="phone">
+                Phone Number
+               </label>
+              </div>
+             </div>
+             <div class="col-12 col-md-6">
+              <div class="form-floating">
+               <input autocomplete="new-password" class="form-control bg-transparent text-light" id="City" placeholder="City" type="tel"/>
+               <label class="text-light" for="City">
+                City
+               </label>
+              </div>
+             </div>
+             <div class="col-12">
+              <div class="form-floating">
+               <input autocomplete="new-password" class="form-control bg-transparent text-light" id="Address" placeholder="Address" type="tel"/>
+               <label class="text-light" for="Address">
+                Address
+               </label>
+              </div>
+             </div>
+             <div class="mb-4">
+              <label class="d-block text-light mb-2">
+               Agent Type
+              </label>
+              <div class="d-flex flex-row gap-4">
+               <div class="form-check">
+                <input class="form-check-input border-info bg-transparent" id="Sub_Provider" name="agentType" type="radio" value="agent"/>
+                <label class="form-check-label text-light ms-2" for="Sub_Provider">
+                 Sub-Provider
+                </label>
+               </div>
+               <div class="form-check">
+                <input class="form-check-input border-info bg-transparent" id="Distributor" name="agentType" type="radio" value="Distributor"/>
+                <label class="form-check-label text-light ms-2" for="Distributor">
+                 Distributor
+                </label>
+               </div>
+               <div class="form-check">
+                <input class="form-check-input border-info bg-transparent" id="POS" name="agentType" type="radio" value="reseller"/>
+                <label class="form-check-label text-light ms-2" for="POS">
+                 POS
+                </label>
+               </div>
+              </div>
+             </div>
+             <div class="col-12">
+              <label class="form-label text-light mb-2">
+               Security Check (CAPTCHA)
+              </label>
+              <div class="d-flex align-items-center gap-3">
+               <button class="btn btn-outline-light btn-sm" title="Refresh CAPTCHA" type="button">
+                <i class="bi bi-arrow-clockwise">
+                </i>
+               </button>
+              </div>
+              <div class="mt-3">
+               <input autocomplete="new-password" class="form-control bg-transparent text-light" id="captchaInput" placeholder="Enter the text you see above" type="text"/>
+              </div>
+             </div>
+             <div class="col-12 text-center mt-4">
+              <button class="btn btn-info btn-lg px-5 py-3 rounded-pill text-dark fw-bold" type="submit">
+               Submit Application
+              </button>
+             </div>
+             <div class="col-12 text-center mt-4 mb-5">
+              <a class="back-to-home-link" href="/">
+               <i class="bi bi-arrow-left me-2">
+               </i>
+               Back to Home Page
+              </a>
+             </div>
+            </div>
+           </form>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!--$-->
+     <!--/$-->
+     <!--$-->
+     <!--/$-->
+    </div>
+   </div>
   </div>
   <!--/$-->
-  <div hidden="" id="S:0">
-   <section aria-atomic="false" aria-label="Notifications Alt+T" aria-live="polite" aria-relevant="additions text" class="Toastify">
-   </section>
-   <div class="">
-    <div class="page-wrapper">
-     <div class="position-fixed top-0 m-3 rounded shadow-sm end-0" style="z-index:1050;width:140px">
-      <select aria-label="Select language" class="form-select form-select-sm">
-       <option value="en">
-        English
-       </option>
-       <option selected="" value="ar">
-        العربية
-       </option>
-      </select>
-     </div>
-     <div class="canvas-background" style="position:relative;width:100%;height:100%;overflow:hidden;pointer-events:auto">
-      <div style="width:100%;height:100%">
-       <canvas style="display:block">
-       </canvas>
-      </div>
-     </div>
-     <div class="foreground-container container py-5">
-      <template id="P:1">
-      </template>
-      <!--$-->
-      <!--/$-->
-      <!--$-->
-      <!--/$-->
-     </div>
-    </div>
-   </div>
-  </div>
-  <link as="image" href="http://localhost:8000/media_url/company_logo/company_logo_50HaW1a.png" rel="preload"/>
-  <div hidden="" id="S:1">
-   <div>
-    <div class="text-center mb-5">
-     <img alt="Logo" class="logo-img" src="http://localhost:8000/media_url/company_logo/company_logo_50HaW1a.png"/>
-     <h1 class="page-title">
-      <!-- -->
-      خدمة Wi-Fi Outdoor
-      <!-- -->
-     </h1>
-    </div>
-    <div class="container">
-     <div class="row g-4 justify-content-center">
-      <div class="col-12 col-sm-6 col-lg-3 d-flex">
-       <a class="service-card-link w-100" href="/agent_request">
-        <div class="service-card h-100">
-         <div class="card-body text-center">
-          <div class="mb-2">
-           <i class="bi display-4 text-info bi-wifi">
-           </i>
-          </div>
-          <h5 class="card-title">
-           <!-- -->
-           طلب أن تصبح وكيل او موزع للخدمة
-          </h5>
-          <p class="card-text mb-3">
-           هل تريد ان تصبح أحد من موزعي الشركة او الوكلاء؟
-          </p>
-         </div>
-        </div>
-       </a>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-3 d-flex">
-       <a class="service-card-link w-100" href="/service_request">
-        <div class="service-card h-100">
-         <div class="card-body text-center">
-          <div class="mb-2">
-           <i class="bi display-4 text-info bi-wifi">
-           </i>
-          </div>
-          <h5 class="card-title">
-           <!-- -->
-           طلب اشتراك بخدمة wifi
-          </h5>
-          <p class="card-text mb-3">
-           تقدم بطلب للإشتراك بخدمة واي فاي
-          </p>
-         </div>
-        </div>
-       </a>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-3 d-flex">
-       <a class="service-card-link w-100" href="/check_status">
-        <div class="service-card h-100">
-         <div class="card-body text-center">
-          <div class="mb-2">
-           <i class="bi display-4 text-info bi-wifi">
-           </i>
-          </div>
-          <h5 class="card-title">
-           <!-- -->
-           تفقد حالة الطلب ؟
-          </h5>
-          <p class="card-text mb-3">
-           هل ترغب بمعرفة حالة طلبك الذي تقدمت به ؟
-          </p>
-         </div>
-        </div>
-       </a>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-3 d-flex">
-       <a class="service-card-link w-100" href="/service_Price">
-        <div class="service-card h-100">
-         <div class="card-body text-center">
-          <div class="mb-2">
-           <i class="bi display-4 text-info bi-wifi">
-           </i>
-          </div>
-          <h5 class="card-title">
-           <!-- -->
-           أسعار الخدمة
-          </h5>
-          <p class="card-text mb-3">
-           تعرف على اسعار الخدمة
-          </p>
-         </div>
-        </div>
-       </a>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
  </body>
 </html>
