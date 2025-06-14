@@ -57,6 +57,8 @@ export default  async function   RootLayout(
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
        <meta name="theme-color" content="#000000" />
  
+      <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
+ 
 
      </head>
 

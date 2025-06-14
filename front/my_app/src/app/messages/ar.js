@@ -1,8 +1,8 @@
 
-
-
+import easy_apply_request_agent from "./main_site/ar/easy_apply"
 
 export default {
 
-    test : "جملة للإختبار"
+    easy_apply_request_agent,
+    
 }

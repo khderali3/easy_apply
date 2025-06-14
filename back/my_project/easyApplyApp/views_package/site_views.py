@@ -40,6 +40,17 @@ import json
 
 
 
+
+
+class SpeedPackagePriceList(APIView):
+    permission_classes = []
+    def get(self, request):
+        list_obj = SpeedPackagePrice.objects.all()
+        serializer = SpeedPackagePriceSerializer(list_obj, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 class GetAppIndexView(APIView):
     permission_classes = [AllowAny]
 
@@ -148,14 +159,13 @@ class RequestServiceView(APIView):
         if not is_valid:
             return Response({"message": error}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-        speed_obj_id = request.data.get('speed')
+        speed_obj_id = request.data.get('speed_package')
         speed_obj = get_object_or_404(SpeedPackagePrice, id=speed_obj_id)
-        speed_json = json.dumps(SpeedPackagePriceSerializer(speed_obj).data)
+
+        speed_obj_json = json.dumps(SpeedPackagePriceSerializer(speed_obj).data)
         data = request.data.copy()
-        data['speed'] = speed_json
+        data['speed_package'] = speed_obj_json
+
         data['created_ip_address']  = get_client_ip(request)
 
         serializer = RequestServiceSerializer(data=data)
@@ -168,6 +178,7 @@ class RequestServiceView(APIView):
 
 class RequestAgentView(APIView):
     permission_classes = [AllowAny]
+
 
     def post(self, request):
 
@@ -208,14 +219,17 @@ class CheckRequestStatusView(APIView):
         type_of_request = check_request_serializer.validated_data['type_of_request']
         phone_number = check_request_serializer.validated_data['phone_number']
 
-
+        serializer = None
  
         if type_of_request == 'client':
             queryset = RequestService.objects.filter(phone_number=phone_number)
             serializer = RequestServiceSerializer(queryset, many=True)
-        else:  # type_of_request == 'agent'
+        elif type_of_request == 'agent':  # type_of_request == 'agent'
             queryset = RequestAgent.objects.filter(phone_number=phone_number)
             serializer = RequestAgentSerializer(queryset, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if serializer:
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
+        else :
+            return Response({"message": "type_of_request is incurrct"}, status=status.HTTP_400_BAD_REQUEST)

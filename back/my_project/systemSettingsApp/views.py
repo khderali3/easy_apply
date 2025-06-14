@@ -2,11 +2,20 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from .serializer import MainConfigurationSerializer, QueuedEmailSerializer
+from .serializer import MainConfigurationSerializer, QueuedEmailSerializer,SiteSettingsSerializer
 from .models import MainConfiguration, QueuedEmail
 from rest_framework.views import APIView , status, Response
 
 from .general_utils.custom_utils import IsStaffOrSuperUser
+
+
+
+class SiteSettingsView(APIView):
+    permission_classes = []
+    def get(self, request):
+        obj = MainConfiguration.get_solo()
+        serializer = SiteSettingsSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

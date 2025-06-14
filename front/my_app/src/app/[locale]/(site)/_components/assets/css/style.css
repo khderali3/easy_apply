@@ -270,39 +270,7 @@
 
 
 
-
-
-
-
-/* 
-.language-switcher {
-  position: fixed !important;
-  z-index: 1050 !important;
-}
-
-.Toastify__toast-container {
-  z-index: 9999 !important;  
-}
-
-
-.custom-toast {
-  z-index: 9999 !important;
-} */
-
-/* Ensure container and the toast messages are always on top */
-/* .Toastify__toast-container,
-.Toastify__toast,
-*/
-
-/* .Toastify__toast
-.Toastify__toast-container
-.custom-toast {
-  z-index: 9999 !important;
-  position: fixed !important;
-  pointer-events: all;
-} */
-
-
+ 
  
 
 
@@ -348,3 +316,45 @@
     transform: translateY(0);
   }
 } 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+input.form-control.bg-transparent.text-light:-webkit-autofill,
+input.form-control.bg-transparent.text-light:-webkit-autofill:hover,
+input.form-control.bg-transparent.text-light:-webkit-autofill:focus,
+input.form-control.bg-transparent.text-light:-webkit-autofill:active,
+input.form-control.bg-transparent.text-light:-webkit-autofill:focus-visible {
+  -webkit-text-fill-color: #f8f9fa !important; /* text-light color */
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  background-color: transparent !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+
+ 
+
+
+[dir="rtl"] .form-floating > label {
+  left: auto !important;
+  right: 0.75rem !important;  /* Match your input padding */
+  transform-origin: top right !important;
+  text-align: right;
+}
+
+
+body {
+  font-family: 'Tajawal', sans-serif;
+}

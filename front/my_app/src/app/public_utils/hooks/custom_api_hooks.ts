@@ -12,7 +12,13 @@ export function usePageDataFetcher() {
  
   const [customFetch] = useCustomFetchMutation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false)
   const [data, setData] = useState<any>(null);
+ 
+
+
+
+
   const locale = useLocale()
 
   const default_post_success_message = locale === "ar" ? "تم إرسال البيانات بنجاح" : "Your data has been submitted successfully";
@@ -56,29 +62,31 @@ const fetchData: any = async (
   pageUrl: string,
   method_type: MethodType,
   body: any = null,
+  handleFunctionAfterSuccess: any = null,
+  dontSendSuccessMessage:any = false,
   onSuccessMessage: string | null = null,
   onErrorMessage: string | null = null,
-  handleFunctionAfterSuccess: any = null
 ) => {
   setIsLoading(true);
+  setIsError(false)
   try {
     const response = await customFetch({
       url: pageUrl,
       method: method_type,
       body: body,
-      headers: {
-        "Content-Type": "application/json",
-      },
     }).unwrap(); // Will throw if the backend returns an error
 
     setData(response);
+    if(!dontSendSuccessMessage){
+      const msg = onSuccessMessage || getSuccessMessage(method_type);
+      if (msg) toast.success(msg);
+    }
 
-    const msg = onSuccessMessage || getSuccessMessage(method_type);
-    if (msg) toast.success(msg);
 
     if (handleFunctionAfterSuccess) handleFunctionAfterSuccess();
 
   } catch (error: any) {
+    setIsError(true)
     const fallbackMsg = onErrorMessage || getErrorMessageByMethod(method_type);
     if (fallbackMsg) toast.error(fallbackMsg);
 
@@ -94,6 +102,7 @@ const fetchData: any = async (
   return {
     fetchData,
     isLoading,
+    isError,
     data,
   };
 }

@@ -29,6 +29,12 @@ class CardLabelRequestAgent(models.Model):
     details_ar = models.CharField(max_length=255, blank=True, default="")
     bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
+    request_form_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_title_ar = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title_ar = models.CharField(max_length=255, blank=True, default="")
+
+
     def __str__(self):
         return self.title    
 
@@ -46,6 +52,15 @@ class CardLabelRequestService(models.Model):
     details_ar = models.CharField(max_length=255, blank=True, default="")
     bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
 
+    request_form_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_title_ar = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title_ar = models.CharField(max_length=255, blank=True, default="")
+
+
+
+
+
     def __str__(self):
         return self.title    
 
@@ -62,6 +77,15 @@ class CardLabelCheckRequest(models.Model):
     title_ar =  models.CharField(max_length=255, blank=True, default="")
     details_ar = models.CharField(max_length=255, blank=True, default="")
     bootstrap_icon = models.CharField(max_length=100, blank=True, default="bi-wifi")
+
+    request_form_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title = models.CharField(max_length=255, blank=True, default="")
+    request_form_title_ar = models.CharField(max_length=255, blank=True, default="")
+    request_form_sub_title_ar = models.CharField(max_length=255, blank=True, default="")
+
+
+
+
 
     def __str__(self):
         return self.title    
@@ -96,14 +120,12 @@ class CardLabelServicePrices(models.Model):
 class RequestService(models.Model):
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, db_index=True)
-    speed = models.JSONField(null=True, blank=True)  
-    custom_speed = models.CharField(max_length=10, blank=True, null=True)
     city= models.CharField(max_length=50)
-    area = models.CharField(max_length=50)
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)  # Set once when created
     updated = models.DateTimeField(auto_now=True)      # Updated every time saved
     request_result_note = models.CharField(max_length=255, default='')
+    speed_package = models.JSONField(default=dict)
 
     created_ip_address = models.GenericIPAddressField(null=True, blank=True) 
 
@@ -116,6 +138,8 @@ class RequestService(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
 
     result_note  = models.CharField(max_length=255, blank=True, default="")
+
+    type = models.CharField(default="service")
 
     def __str__(self):
         return self.full_name    
@@ -145,10 +169,17 @@ class RequestAgent(models.Model):
 
     AGENT_TYPE_OPTIONS = [
         ('sub_provider', 'sub_provider'),
-        ('distributor ', 'distributor'),
-        ('pos ', 'pos'),
+        ('distributor', 'distributor'),
+        ('pos', 'pos'),
     ]
 
+
+    BUSINESS_TYPE_OPTIONS = [
+        ('shop', 'Shop'),
+        ('company', 'Company'),
+    ]
+ 
+    business_type = models.CharField(max_length=50, choices=BUSINESS_TYPE_OPTIONS)
     agent_type = models.CharField(max_length=50, choices=AGENT_TYPE_OPTIONS)
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, db_index=True)
@@ -167,6 +198,9 @@ class RequestAgent(models.Model):
 
     status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
     result_note  = models.CharField(max_length=255, blank=True, default="")
+
+
+    type = models.CharField(default="agent")
 
     def __str__(self):
         return self.full_name 
