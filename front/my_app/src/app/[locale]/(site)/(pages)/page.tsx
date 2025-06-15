@@ -5,7 +5,7 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 const Page: React.FC = async () => {
   const locale = await getLocale();
-  let data: any = {};
+  let data: any ;
   let errorMessage: any;
 
   try {
@@ -17,9 +17,9 @@ const Page: React.FC = async () => {
     const json = await res.json();
 
     if (!res.ok) {
-      throw new Error(
-        typeof json === "object" ? JSON.stringify(json) : String(json)
-      );
+
+      throw json;
+      
     }
 
     data = json;
@@ -33,8 +33,8 @@ const Page: React.FC = async () => {
   const hasData =
     data &&
     (data.compoany_logo ||
-      data.app_index_title?.title ||
-      data.app_index_title?.title_ar) &&
+      data.app_index_title?.index_page_title ||
+      data.app_index_title?.index_page_title_ar) &&
     (data.card_request_agent_label ||
       data.card_request_service_label ||
       data.card_check_request_label ||
@@ -73,11 +73,11 @@ const Page: React.FC = async () => {
 
           )}
 
-          {data?.app_index_title?.title || data?.app_index_title?.title_ar ? (
+          {data?.app_index_title?.index_page_title || data?.app_index_title?.index_page_title_ar ? (
             <h1 className="page-title mt-3">
               {locale === "ar"
-                ? data.app_index_title?.title_ar
-                : data.app_index_title?.title}
+                ? data.app_index_title?.index_page_title_ar
+                : data.app_index_title?.index_page_title}
             </h1>
           ) : (
             // Title placeholder

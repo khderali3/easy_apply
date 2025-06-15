@@ -3,12 +3,12 @@ from django.apps import apps
 from django.http import HttpResponseRedirect
 
  
-from .models import AppIndexTitle, CardLabelRequestAgent, CardLabelRequestService, CardLabelCheckRequest, CardLabelServicePrices
+from .models import  CardLabelRequestAgent, CardLabelRequestService, CardLabelCheckRequest, CardLabelServicePrices, AppPricesTitle, AppSetting
  
 
 
 
-solo_models = [AppIndexTitle, CardLabelRequestAgent, CardLabelRequestService, CardLabelCheckRequest, CardLabelServicePrices]
+solo_models = [ CardLabelRequestAgent, CardLabelRequestService, CardLabelCheckRequest, CardLabelServicePrices, AppPricesTitle, AppSetting]
 
 # Base admin class for singletons to prevent add/delete and redirect changelist to change page
 class SingletonModelAdmin(admin.ModelAdmin):

@@ -3,16 +3,17 @@ from rest_framework.views import APIView, status, Response
 
 
 from ..serializers_package.site_serializer import (RequestAgentSerializer, RequestServiceSerializer, CheckRequestStatusSerializer, SpeedPackagePriceSerializer,
-                                                    GetPricesInfoSerializer , UnlimitedSpeedTrafficPackagePriceSerializer , TrafficPackagePriceSerializer ,                                  
+                                                    UnlimitedSpeedTrafficPackagePriceSerializer , TrafficPackagePriceSerializer ,                                  
                                                     CardLabelCheckRequestSerializer, CardLabelRequestAgentSerializer, CardLabelRequestServiceSerializer,
-                                                    CardLabelServicePricesServiceSerializer, AppIndexTitleSerializer
+                                                    CardLabelServicePricesServiceSerializer,  AppPricesTitleSerializer, 
+                                                    AppSettingSerializer
 
                                                    )
 
 
 from ..models import (RequestAgent, RequestService, SpeedPackagePrice, UnlimitedSpeedTrafficPackagePrice, TrafficPackagePrice,
-                    CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, AppIndexTitle
-                     
+                    CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, 
+                    AppPricesTitle, AppSetting, 
                     )
 
 
@@ -41,15 +42,19 @@ import json
 
 
 
-
-class SpeedPackagePriceList(APIView):
+class SpeedPackagePriceView(APIView):
     permission_classes = []
     def get(self, request):
-        list_obj = SpeedPackagePrice.objects.all()
-        serializer = SpeedPackagePriceSerializer(list_obj, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        speed_packages = SpeedPackagePrice.objects.all()
+        serailizer = SpeedPackagePriceSerializer(speed_packages, many=True)
+        return Response(serailizer.data, status=status.HTTP_200_OK)
 
 
+
+
+
+
+ 
 
 class GetAppIndexView(APIView):
     permission_classes = [AllowAny]
@@ -57,7 +62,7 @@ class GetAppIndexView(APIView):
     def get(self, request):
         # return Response({'message' : "error from django"}, status=status.HTTP_400_BAD_REQUEST)
 
-        app_index_title_obj = AppIndexTitle.get_solo()
+        app_index_title_obj = AppSetting.get_solo()
         main_config = MainConfiguration.get_solo()
         compoany_logo = None
         try:
@@ -75,7 +80,7 @@ class GetAppIndexView(APIView):
                 return Response({
                     "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
                     "compoany_logo" : compoany_logo,
-                    "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+                    "app_index_title" : AppSettingSerializer(app_index_title_obj).data
 
                 }, status=status.HTTP_200_OK)
  
@@ -84,7 +89,7 @@ class GetAppIndexView(APIView):
                 return Response({
                 "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
                 "compoany_logo" : compoany_logo,
-                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+                "app_index_title" : AppSettingSerializer(app_index_title_obj).data
                 }, status=status.HTTP_200_OK)
 
             elif key == "card_request_service_label":
@@ -92,7 +97,7 @@ class GetAppIndexView(APIView):
                 return Response({
                 "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
                 "compoany_logo" : compoany_logo,
-                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+                "app_index_title" : AppSettingSerializer(app_index_title_obj).data
 
                 }, status=status.HTTP_200_OK)
 
@@ -101,7 +106,7 @@ class GetAppIndexView(APIView):
                 return Response({
                 "card_service_prices_label" : CardLabelServicePricesServiceSerializer(card_service_prices_label_obj).data,
                 "compoany_logo" : compoany_logo,
-                "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data
+                "app_index_title" : AppSettingSerializer(app_index_title_obj).data
 
                 }, status=status.HTTP_200_OK)
 
@@ -116,7 +121,7 @@ class GetAppIndexView(APIView):
 
         return Response({
             "compoany_logo" : compoany_logo,
-            "app_index_title" : AppIndexTitleSerializer(app_index_title_obj).data,
+            "app_index_title" : AppSettingSerializer(app_index_title_obj).data,
             "card_check_request_label" : CardLabelCheckRequestSerializer(card_check_request_label_obj).data,
             "card_request_agent_label" : CardLabelRequestAgentSerializer(card_request_agent_label_obj).data,
             "card_request_service_label" : CardLabelRequestServiceSerializer(card_request_service_label_obj).data,
@@ -131,18 +136,35 @@ class GetPricesInfoView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+
+        app_prices_title_obj = AppPricesTitle.get_solo()
+        main_config = MainConfiguration.get_solo()
+        compoany_logo = None
+        try:
+            if main_config.company_logo:
+                compoany_logo = request.build_absolute_uri(main_config.company_logo.url)  # full absolute URL
+        except:
+            pass
+
+
+
+
+
         unlimited_speed_packages = UnlimitedSpeedTrafficPackagePrice.objects.all()
         traffic_packages = TrafficPackagePrice.objects.all()
         speed_packages = SpeedPackagePrice.objects.all()
 
         data = {
+            "compoany_logo" : compoany_logo,
+            "app_prices_title" : AppPricesTitleSerializer(app_prices_title_obj).data,
             "unlimited_speed_packages": UnlimitedSpeedTrafficPackagePriceSerializer(unlimited_speed_packages, many=True).data,
             "traffic_packages": TrafficPackagePriceSerializer(traffic_packages, many=True).data,
             "speed_packages": SpeedPackagePriceSerializer(speed_packages, many=True).data,
         }
 
-        serializer = GetPricesInfoSerializer(data)
-        return Response(serializer.data)
+        # serializer = GetPricesInfoSerializer(data)
+        # return Response(serializer.data)
+        return Response(data)
 
 
 
@@ -158,6 +180,26 @@ class RequestServiceView(APIView):
         is_valid, error = verify_image_captcha(request)
         if not is_valid:
             return Response({"message": error}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        settings = AppSetting.get_solo()
+        max_allowed = settings.max_request_user_service
+
+        phone_number = request.data.get("phone_number")
+        if not phone_number:
+            return Response({"message": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request_count = RequestService.objects.filter(phone_number=phone_number).count()
+        if max_allowed and request_count >= max_allowed:
+            return Response(
+                {"message": f"You are not allowed to send more than {max_allowed} requests."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+
+
+
 
         speed_obj_id = request.data.get('speed_package')
         speed_obj = get_object_or_404(SpeedPackagePrice, id=speed_obj_id)
@@ -179,13 +221,34 @@ class RequestServiceView(APIView):
 class RequestAgentView(APIView):
     permission_classes = [AllowAny]
 
-
     def post(self, request):
-
  
         is_valid, error = verify_image_captcha(request)
         if not is_valid:
             return Response({"message": error}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        settings = AppSetting.get_solo()
+        max_allowed = settings.max_request_agent
+
+        phone_number = request.data.get("phone_number")
+        if not phone_number:
+            return Response({"message": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request_count = RequestService.objects.filter(phone_number=phone_number).count()
+        if max_allowed and request_count >= max_allowed:
+            return Response(
+                {"message": f"You are not allowed to send more than {max_allowed} requests."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+
+
+
+
+
 
 
 

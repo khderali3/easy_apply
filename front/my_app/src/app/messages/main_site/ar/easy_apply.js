@@ -96,7 +96,25 @@ export default {
             Checking_status : "جاري التحقق...",
             No_requests_found : "لايوجد أي طلبات",
             No_requests_found_hint : "لم تقم بإرسال أي طلب",
+    },
+
+
+    prices_page : {
+
+        Wi_Fi_Outdoor_Packages : "باقات Wi-Fi Outdoor",
+        Speed : "السرعة",
+        traffc_limit : "سعة البيانات",
+        Monthly_Price : "الإشتراك الشهري",
+        SYP : "ل.س",
+        Standard_Traffic : "باقات البيانات الأساسية",
+        traffic_package : "باقة البيانات",
+        price: "السعر",
+
+        Unlimited_Speed_traffic : "باقات البيانات للسرعات غير المحدودة",
+        back_to_home : "العودة للصفحة الرئيسية"
+
     }
+    
 
 
 }

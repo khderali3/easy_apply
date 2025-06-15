@@ -1,4 +1,4 @@
-
+ 
 
 export const getErrorMessage = (errorData:any) => {
 
@@ -6,22 +6,18 @@ export const getErrorMessage = (errorData:any) => {
     errorData = errorData.data;
   }
 
-
-  if (!errorData) return "An error occurred"; // Default message if data is empty
+  if (!errorData) return "An error occurred"; 
 
   if (typeof errorData === "string") {
-    return errorData; // Return the string directly
+    return errorData;  
   }
 
   if (Array.isArray(errorData)) {
-    return errorData.join(", "); // Convert list to a single message
+    return errorData.join(", "); 
   }
 
   if (typeof errorData === "object") {
-    // If errorData is an object, return key-value pairs
-
-
-
+   
     if ("message" in errorData) {
       return errorData.message;
     }
@@ -29,14 +25,12 @@ export const getErrorMessage = (errorData:any) => {
       return errorData.detail;
     }
 
-
-
     return Object.entries(errorData)
       .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`)
       .join(" | ");
   }
 
-  return "An unexpected error occurred"; // Fallback message
+  return "An unexpected error occurred";  
 };
 
 

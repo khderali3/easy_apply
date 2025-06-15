@@ -1,9 +1,36 @@
  
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.http import JsonResponse
+from django.conf.urls import handler404
+from rest_framework.views import APIView, Response, status
+
+ 
+def custom_404_handler(request, exception):
+    return JsonResponse(
+        {
+            "message": f"Request path not found: {request.path}"
+        },
+        status=404
+    )
+
+ 
+
+handler404 = custom_404_handler
+
+
+class  Custom404DevelopmentView(APIView):
+    permission_classes = []
+    def get(self, request):
+        return Response(
+            {
+                "message": f"Request path not found (development): {request.path}"
+            },
+            status=404
+        )
 
 
 urlpatterns = [
@@ -19,3 +46,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        re_path(r'^.*$', Custom404DevelopmentView.as_view()),
+    ]
+
+ 

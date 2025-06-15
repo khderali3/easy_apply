@@ -343,10 +343,7 @@ input.form-control.bg-transparent.text-light:-webkit-autofill:focus-visible {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-
  
-
-
 [dir="rtl"] .form-floating > label {
   left: auto !important;
   right: 0.75rem !important;  /* Match your input padding */
@@ -358,3 +355,28 @@ input.form-control.bg-transparent.text-light:-webkit-autofill:focus-visible {
 body {
   font-family: 'Tajawal', sans-serif;
 }
+
+
+
+
+
+/* Fix RTL table alignment */
+[dir="rtl"] table.table {
+  direction: rtl;
+}
+
+[dir="rtl"] table.table th.text-start,
+[dir="rtl"] table.table td.text-start {
+  text-align: right !important;
+}
+
+[dir="rtl"] table.table th.text-end,
+[dir="rtl"] table.table td.text-end {
+  text-align: left !important;
+}
+
+[dir="rtl"] table.table th.text-center,
+[dir="rtl"] table.table td.text-center {
+  text-align: center !important;
+}
+ 

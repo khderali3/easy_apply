@@ -95,6 +95,21 @@ export default {
             Checking_status : "Checking status...",
             No_requests_found : "No requests found.",
             No_requests_found_hint : "You haven’t submitted any requests yet.",
+    }, 
+
+    prices_page : {
+
+        Wi_Fi_Outdoor_Packages : "Wi-Fi Outdoor Packages",
+        Speed : "Speed",
+        traffc_limit : "Traffic Limit",
+        Monthly_Price : "Monthly Price",
+        SYP : "SYP",
+        Standard_Traffic : " Standard Traffic Packages",
+        traffic_package : "Traffic Package",
+        price: "Price",
+        Unlimited_Speed_traffic : "Unlimited Speed Traffic Packages",
+        back_to_home : "Back to Home Page"
+
     }
 
 

@@ -1,22 +1,33 @@
 
 from ..models import (RequestService, RequestAgent,
                        SpeedPackagePrice, TrafficPackagePrice, UnlimitedSpeedTrafficPackagePrice,
-                       CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, AppIndexTitle
-                      
+                       CardLabelCheckRequest, CardLabelRequestAgent, CardLabelRequestService, CardLabelServicePrices, 
+                        AppPricesTitle, AppSetting
+
                       )
 
 from rest_framework import serializers
  
 
 
-class AppIndexTitleSerializer(serializers.ModelSerializer):
+class AppSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppSetting
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+class AppPricesTitleSerializer(serializers.ModelSerializer):
+
 
     class Meta:
-        model = AppIndexTitle
+        model = AppPricesTitle
         fields = "__all__"
-        read_only_fields = ['id']
+        read_only_fields = ["id"]
 
 
+
+ 
 
 
 class CardLabelCheckRequestSerializer(serializers.ModelSerializer):
@@ -91,16 +102,6 @@ class SpeedPackagePriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpeedPackagePrice
         fields =  "__all__"
-
-
-
-
-class GetPricesInfoSerializer(serializers.Serializer):
-    unlimited_speed_packages = UnlimitedSpeedTrafficPackagePriceSerializer(many=True)
-    traffic_packages = TrafficPackagePriceSerializer(many=True)
-    speed_packages = SpeedPackagePriceSerializer(many=True)
-
-
 
 
 

@@ -454,11 +454,9 @@ useEffect(() => {
                           }
 
 
-
-
                           <div className="mt-3 p-3 rounded border border-secondary">
                             <p className="mb-1 text-light">{t('staff_note')} :</p>
-                            <p className="text-info">{obj?.result_note ? obj?.result_note  : "-"}</p>
+                            <p dir="auto" className="text-info">{obj?.result_note ? obj?.result_note  : "-"}</p>
                           </div>
                         </div>
                       </div>

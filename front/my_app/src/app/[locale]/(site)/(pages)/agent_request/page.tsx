@@ -10,7 +10,6 @@ import { useLocale, useTranslations } from "next-intl"
 import { toast } from "react-toastify"
 
 import { useSelector  } from 'react-redux';
-import { stringify } from "querystring"
 
 
 
@@ -33,9 +32,6 @@ const Page = () =>{
     const { fetchData : pageInfoApi  , isLoading : pageInfoApiIsLoading ,  isError:pageInfoApiIsError , data : pageInfoApiData } = usePageDataFetcher()
 
  
-    const handleOnSuccess : any = () => {
-      router.push('/')
-    }
 
     const [data, setData] = useState<any>({
       full_name  : "",
@@ -47,6 +43,24 @@ const Page = () =>{
       captcha_id : "",
       captcha_input: ""
     })
+
+
+    const handleOnSuccess : any = () => {
+        setData({
+        full_name  : "",
+        phone_number : "",
+        city : "",
+        address: "",
+        business_type : "",
+        agent_type : "",
+        captcha_id : "",
+        captcha_input: ""
+      })
+        router.push('/')
+    }
+
+
+
 
 
 

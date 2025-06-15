@@ -8,10 +8,35 @@ User = get_user_model()
 
 
 
-class AppIndexTitle(models.Model):
+
+class AppSetting(models.Model):
+
+    index_page_title =  models.CharField(max_length=255, blank=True, default="")
+    index_page_title_ar =  models.CharField(max_length=255, blank=True, default="")
+    max_request_user_service = models.PositiveIntegerField(default=10, help_text="Max requests allowed per user servic , if 0 no limits ")
+    max_request_agent = models.PositiveIntegerField(default=10, help_text="Max requests allowed per agent, if 0 no limits")
+
+    def __str__(self):
+        return "App Settings"  
+    
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+
+
+
+
+ 
+
+
+class AppPricesTitle(models.Model):
     title =  models.CharField(max_length=255, blank=True, default="")
     title_ar =  models.CharField(max_length=255, blank=True, default="")
-
+    title_hint =  models.CharField(max_length=255, blank=True, default="")
+    title_hint_ar =  models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self):
         return self.title   
@@ -20,6 +45,11 @@ class AppIndexTitle(models.Model):
     def get_solo(cls):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
+
+
+
+
+
 
 
 class CardLabelRequestAgent(models.Model):
@@ -124,15 +154,14 @@ class RequestService(models.Model):
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)  # Set once when created
     updated = models.DateTimeField(auto_now=True)      # Updated every time saved
-    request_result_note = models.CharField(max_length=255, default='')
+    # request_result_note = models.CharField(max_length=255, default='')
     speed_package = models.JSONField(default=dict)
-
     created_ip_address = models.GenericIPAddressField(null=True, blank=True) 
 
 
     STATUS_OPTIONS = [
         ('pinding', 'Pinding'),
-        ('complated ', 'Complated'),
+        ('complated', 'Complated'),
     ]
 
     status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
@@ -187,13 +216,13 @@ class RequestAgent(models.Model):
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)  # Set once when created
     updated = models.DateTimeField(auto_now=True)      # Updated every time saved
-    request_result_note = models.CharField(max_length=255, default='')
+    # request_result_note = models.CharField(max_length=255, default='')
     created_ip_address = models.GenericIPAddressField(null=True, blank=True) 
 
 
     STATUS_OPTIONS = [
         ('pinding', 'Pinding'),
-        ('complated ', 'Complated'),
+        ('complated', 'Complated'),
     ]
 
     status = models.CharField(max_length=50, choices=STATUS_OPTIONS, default='pinding')
